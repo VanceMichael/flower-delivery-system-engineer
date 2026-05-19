@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+coverage/
+*.min.js
+*.min.css
+backend/.env
+backend/.env.*
+backend/src/utils/seedData.js
+TestM_3.txt

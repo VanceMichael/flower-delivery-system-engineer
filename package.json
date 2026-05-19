@@ -1,0 +1,49 @@
+{
+  "name": "flower-delivery-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "鲜花配送管理系统 - Monorepo",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
+    "lint:backend": "npm run lint -w backend",
+    "lint:frontend": "npm run lint -w frontend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "test:backend": "npm run test -w backend",
+    "test:frontend": "npm run test -w frontend",
+    "build": "npm run build -w frontend && npm run build -w backend",
+    "build:backend": "npm run build -w backend",
+    "build:frontend": "npm run build -w frontend",
+    "format": "prettier --write \"backend/src/**/*.{js,mjs}\" \"frontend/src/**/*.{js,vue,css}\" \"*.{json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"backend/src/**/*.{js,mjs}\" \"frontend/src/**/*.{js,vue,css}\" \"*.{json,md,yml,yaml}\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.9.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3"
+  },
+  "lint-staged": {
+    "*.{js,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.vue": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.css": [
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

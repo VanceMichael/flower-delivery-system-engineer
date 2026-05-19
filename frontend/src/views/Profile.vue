@@ -8,7 +8,13 @@
           <div class="user-tip" v-if="!userStore.isLoggedIn">点击登录</div>
           <div class="user-tip" v-else>{{ userStore.userInfo?.phone || '已登录' }}</div>
         </div>
-        <van-icon name="arrow" size="16" color="#fff" class="arrow-icon" v-if="userStore.isLoggedIn" />
+        <van-icon
+          name="arrow"
+          size="16"
+          color="#fff"
+          class="arrow-icon"
+          v-if="userStore.isLoggedIn"
+        />
       </div>
     </div>
 
@@ -82,19 +88,28 @@
     <van-tabbar v-model="activeTab" route active-color="#1989fa">
       <van-tabbar-item name="home" to="/home">
         <template #icon="props">
-          <van-icon :name="props.active ? 'wap-home' : 'home-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'wap-home' : 'home-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         首页
       </van-tabbar-item>
       <van-tabbar-item name="products" to="/products">
         <template #icon="props">
-          <van-icon :name="props.active ? 'shopping-cart' : 'shopping-cart-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'shopping-cart' : 'shopping-cart-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         商品
       </van-tabbar-item>
       <van-tabbar-item name="cart" to="/cart">
         <template #icon="props">
-          <van-icon :name="props.active ? 'cart' : 'cart-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'cart' : 'cart-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         <template #badge>
           <van-badge :content="cartCount" v-if="cartCount > 0" />
@@ -103,7 +118,10 @@
       </van-tabbar-item>
       <van-tabbar-item name="profile" to="/profile">
         <template #icon="props">
-          <van-icon :name="props.active ? 'user' : 'user-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'user' : 'user-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         我的
       </van-tabbar-item>
@@ -129,11 +147,13 @@ const handleUserClick = () => {
   if (userStore.isLoggedIn) {
     showConfirmDialog({
       title: '提示',
-      message: '确定要退出登录吗？'
-    }).then(() => {
-      userStore.logout();
-      showToast('已退出登录');
-    }).catch(() => {});
+      message: '确定要退出登录吗？',
+    })
+      .then(() => {
+        userStore.logout();
+        showToast('已退出登录');
+      })
+      .catch(() => {});
   } else {
     router.push('/login');
   }
@@ -141,7 +161,10 @@ const handleUserClick = () => {
 
 const goToOrders = (status) => {
   if (!userStore.isLoggedIn) {
-    router.push({ path: '/login', query: { redirect: status ? `/orders?status=${status}` : '/orders' } });
+    router.push({
+      path: '/login',
+      query: { redirect: status ? `/orders?status=${status}` : '/orders' },
+    });
     return;
   }
   if (status) {

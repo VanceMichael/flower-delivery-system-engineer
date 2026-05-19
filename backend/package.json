@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"no tests yet\"",
+    "lint": "eslint src/**/*.js",
+    "build": "echo \"backend has no build step\""
   },
   "keywords": ["flower", "delivery", "express", "mongodb"],
   "author": "",

@@ -38,8 +38,8 @@ app.get('/api', (req, res) => {
       orders: '/api/orders',
       delivery: '/api/delivery',
       greetingCards: '/api/greeting-cards',
-      holidayPromotions: '/api/holiday-promotions'
-    }
+      holidayPromotions: '/api/holiday-promotions',
+    },
   });
 });
 
@@ -47,22 +47,22 @@ app.get('/api/health', (req, res) => {
   res.json({
     success: true,
     status: 'healthy',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.error('Error:', err);
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || '服务器内部错误'
+    message: err.message || '服务器内部错误',
   });
 });
 
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
-    message: '请求的资源不存在'
+    message: '请求的资源不存在',
   });
 });
 
@@ -70,7 +70,7 @@ const startServer = async () => {
   try {
     await connectDB();
     await seedData();
-    
+
     app.listen(PORT, () => {
       console.log(`服务器运行在端口 ${PORT}`);
       console.log(`API 文档: http://localhost:${PORT}/api`);

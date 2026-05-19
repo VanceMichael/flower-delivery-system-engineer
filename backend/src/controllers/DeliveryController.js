@@ -6,9 +6,11 @@ class DeliveryController {
   async getAllDeliveryPersons(req, res) {
     try {
       const { status, page = 1, limit = 20 } = req.query;
-      
+
       const query = {};
-      if (status) query.status = status;
+      if (status) {
+        query.status = status;
+      }
       query.isActive = true;
 
       const total = await DeliveryPerson.countDocuments(query);
@@ -25,9 +27,9 @@ class DeliveryController {
             page: parseInt(page),
             limit: parseInt(limit),
             total,
-            pages: Math.ceil(total / limit)
-          }
-        }
+            pages: Math.ceil(total / limit),
+          },
+        },
       });
     } catch (error) {
       console.error('获取配送员列表失败:', error);
@@ -46,7 +48,7 @@ class DeliveryController {
         deliveryArea,
         status: 'available',
         totalDeliveries: 0,
-        rating: 5.0
+        rating: 5.0,
       });
 
       await deliveryPerson.save();
@@ -54,7 +56,7 @@ class DeliveryController {
       res.status(201).json({
         success: true,
         message: '配送员创建成功',
-        data: deliveryPerson
+        data: deliveryPerson,
       });
     } catch (error) {
       console.error('创建配送员失败:', error);
@@ -73,7 +75,7 @@ class DeliveryController {
       const deliveryPerson = await DeliveryPerson.findByIdAndUpdate(
         id,
         { $set: updateData },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!deliveryPerson) {
@@ -83,7 +85,7 @@ class DeliveryController {
       res.json({
         success: true,
         message: '配送员更新成功',
-        data: deliveryPerson
+        data: deliveryPerson,
       });
     } catch (error) {
       console.error('更新配送员失败:', error);
@@ -128,8 +130,8 @@ class DeliveryController {
         data: {
           orderId: order._id,
           deliveryPersonId: deliveryPerson._id,
-          deliveryPersonName: deliveryPerson.name
-        }
+          deliveryPersonName: deliveryPerson.name,
+        },
       });
     } catch (error) {
       console.error('分配配送员失败:', error);
@@ -143,7 +145,7 @@ class DeliveryController {
 
       const query = {
         'delivery.status': { $in: ['pending', 'assigned'] },
-        status: { $in: ['shipping', 'preparing', 'pending_confirmation'] }
+        status: { $in: ['shipping', 'preparing', 'pending_confirmation'] },
       };
 
       const total = await Order.countDocuments(query);
@@ -162,9 +164,9 @@ class DeliveryController {
             page: parseInt(page),
             limit: parseInt(limit),
             total,
-            pages: Math.ceil(total / limit)
-          }
-        }
+            pages: Math.ceil(total / limit),
+          },
+        },
       });
     } catch (error) {
       console.error('获取待配送订单失败:', error);
@@ -174,7 +176,7 @@ class DeliveryController {
 
   async confirmDelivery(req, res) {
     try {
-      const { orderId, signature } = req.body;
+      const { orderId, signature: _signature } = req.body;
 
       const order = await Order.findById(orderId);
       if (!order) {
@@ -190,13 +192,10 @@ class DeliveryController {
       order.status = 'delivered';
 
       if (order.delivery.deliveryPersonId) {
-        await DeliveryPerson.findByIdAndUpdate(
-          order.delivery.deliveryPersonId,
-          {
-            $inc: { totalDeliveries: 1 },
-            status: 'available'
-          }
-        );
+        await DeliveryPerson.findByIdAndUpdate(order.delivery.deliveryPersonId, {
+          $inc: { totalDeliveries: 1 },
+          status: 'available',
+        });
       }
 
       await order.save();
@@ -204,7 +203,7 @@ class DeliveryController {
       res.json({
         success: true,
         message: '配送签收确认成功',
-        data: order
+        data: order,
       });
     } catch (error) {
       console.error('确认签收失败:', error);
@@ -220,26 +219,25 @@ class DeliveryController {
         return res.status(400).json({ success: false, message: '请提供订单ID列表' });
       }
 
-      const orders = await Order.find({ _id: { $in: orderIds } })
-        .populate('items.productId', 'name');
+      const orders = await Order.find({ _id: { $in: orderIds } }).populate(
+        'items.productId',
+        'name',
+      );
 
       if (orders.length === 0) {
         return res.status(404).json({ success: false, message: '未找到订单' });
       }
 
-      const deliveryPoints = orders.map(order => ({
+      const deliveryPoints = orders.map((order) => ({
         orderId: order._id,
         orderNo: order.orderNo,
         address: order.recipient?.address,
         latitude: order.recipient?.latitude,
         longitude: order.recipient?.longitude,
-        recipient: order.recipient
+        recipient: order.recipient,
       }));
 
-      const optimizedRoute = RoutePlannerService.optimizeRoute(
-        deliveryPoints,
-        currentLocation
-      );
+      const optimizedRoute = RoutePlannerService.optimizeRoute(deliveryPoints, currentLocation);
 
       const routeSummary = RoutePlannerService.generateRouteSummary(optimizedRoute);
 
@@ -247,8 +245,8 @@ class DeliveryController {
         success: true,
         data: {
           route: optimizedRoute,
-          summary: routeSummary
-        }
+          summary: routeSummary,
+        },
       });
     } catch (error) {
       console.error('优化配送路线失败:', error);
@@ -264,12 +262,14 @@ class DeliveryController {
         return res.status(400).json({ success: false, message: '请提供订单ID列表' });
       }
 
-      const orders = await Order.find({ _id: { $in: orderIds } })
-        .populate('items.productId', 'name');
+      const orders = await Order.find({ _id: { $in: orderIds } }).populate(
+        'items.productId',
+        'name',
+      );
 
       const availableDeliveryPersons = await DeliveryPerson.find({
         status: 'available',
-        isActive: true
+        isActive: true,
       });
 
       if (availableDeliveryPersons.length === 0) {
@@ -278,29 +278,25 @@ class DeliveryController {
 
       const assignmentResult = RoutePlannerService.batchAssignOrders(
         orders,
-        availableDeliveryPersons
+        availableDeliveryPersons,
       );
 
       for (const assignment of assignmentResult.assignments) {
-        await Order.findByIdAndUpdate(
-          assignment.orderId,
-          {
-            'delivery.deliveryPersonId': assignment.deliveryPersonId,
-            'delivery.status': 'assigned',
-            status: 'shipping'
-          }
-        );
+        await Order.findByIdAndUpdate(assignment.orderId, {
+          'delivery.deliveryPersonId': assignment.deliveryPersonId,
+          'delivery.status': 'assigned',
+          status: 'shipping',
+        });
 
-        await DeliveryPerson.findByIdAndUpdate(
-          assignment.deliveryPersonId,
-          { status: 'on_delivery' }
-        );
+        await DeliveryPerson.findByIdAndUpdate(assignment.deliveryPersonId, {
+          status: 'on_delivery',
+        });
       }
 
       res.json({
         success: true,
         message: `成功分配 ${assignmentResult.stats.assigned} 个订单`,
-        data: assignmentResult
+        data: assignmentResult,
       });
     } catch (error) {
       console.error('批量分配订单失败:', error);
@@ -319,10 +315,10 @@ class DeliveryController {
           $set: {
             'currentLocation.latitude': latitude,
             'currentLocation.longitude': longitude,
-            'currentLocation.updatedAt': new Date()
-          }
+            'currentLocation.updatedAt': new Date(),
+          },
         },
-        { new: true }
+        { new: true },
       );
 
       if (!deliveryPerson) {
@@ -332,7 +328,7 @@ class DeliveryController {
       res.json({
         success: true,
         message: '位置更新成功',
-        data: deliveryPerson.currentLocation
+        data: deliveryPerson.currentLocation,
       });
     } catch (error) {
       console.error('更新配送员位置失败:', error);
