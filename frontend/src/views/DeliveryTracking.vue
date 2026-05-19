@@ -53,7 +53,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { orderApi } from '@/api';
 import { showToast } from 'vant';
 
 const route = useRoute();
@@ -71,11 +70,11 @@ const steps = ref([
   { title: '商品已出库', time: '2024-01-15 15:00' },
   { title: '配送员已接单', time: '2024-01-15 15:10' },
   { title: '商品正在配送中', time: '2024-01-15 15:30' },
-  { title: '已送达', time: '' }
+  { title: '已送达', time: '' },
 ]);
 
 const activeStep = computed(() => {
-  const index = steps.value.findIndex(step => !step.time);
+  const index = steps.value.findIndex((step) => !step.time);
   return index > -1 ? index : steps.value.length;
 });
 

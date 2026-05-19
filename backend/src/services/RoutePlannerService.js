@@ -4,24 +4,24 @@ class RoutePlannerService {
   constructor() {
     this.warehouseLocation = {
       latitude: 39.9042,
-      longitude: 116.4074
+      longitude: 116.4074,
     };
   }
 
   calculateDistance(point1, point2) {
     return geolib.getDistance(
       { latitude: point1.latitude, longitude: point1.longitude },
-      { latitude: point2.latitude, longitude: point2.longitude }
+      { latitude: point2.latitude, longitude: point2.longitude },
     );
   }
 
   calculateRouteDuration(distance, speed = 5) {
-    return (distance / 1000) / speed * 60;
+    return (distance / 1000 / speed) * 60;
   }
 
   optimizeRoute(deliveryPoints, currentLocation = null) {
     if (deliveryPoints.length === 0) return [];
-    
+
     const startPoint = currentLocation || this.warehouseLocation;
     const unvisited = [...deliveryPoints];
     const optimizedRoute = [];
@@ -43,7 +43,7 @@ class RoutePlannerService {
       optimizedRoute.push({
         ...selected,
         distanceFromLast: nearestDistance,
-        estimatedDuration: this.calculateRouteDuration(nearestDistance)
+        estimatedDuration: this.calculateRouteDuration(nearestDistance),
       });
 
       currentPos = selected;
@@ -58,7 +58,7 @@ class RoutePlannerService {
 
     const orderLocation = {
       latitude: order.recipient.latitude || this.warehouseLocation.latitude,
-      longitude: order.recipient.longitude || this.warehouseLocation.longitude
+      longitude: order.recipient.longitude || this.warehouseLocation.longitude,
     };
 
     let bestMatch = null;
@@ -74,47 +74,49 @@ class RoutePlannerService {
       }
     }
 
-    return bestMatch ? {
-      deliveryPerson: bestMatch,
-      distance: bestDistance,
-      estimatedTime: this.calculateRouteDuration(bestDistance)
-    } : null;
+    return bestMatch
+      ? {
+          deliveryPerson: bestMatch,
+          distance: bestDistance,
+          estimatedTime: this.calculateRouteDuration(bestDistance),
+        }
+      : null;
   }
 
   batchAssignOrders(orders, deliveryPersons) {
-    const availablePersons = deliveryPersons.filter(dp => dp.status === 'available');
+    const availablePersons = deliveryPersons.filter((dp) => dp.status === 'available');
     const assignments = [];
     const unassignedOrders = [];
 
-    const ordersWithLocation = orders.map(order => ({
+    const ordersWithLocation = orders.map((order) => ({
       ...order,
       location: {
         latitude: order.recipient?.latitude || this.warehouseLocation.latitude,
-        longitude: order.recipient?.longitude || this.warehouseLocation.longitude
-      }
+        longitude: order.recipient?.longitude || this.warehouseLocation.longitude,
+      },
     }));
 
     const groupedByArea = this.groupOrdersByArea(ordersWithLocation);
 
     for (const [area, areaOrders] of Object.entries(groupedByArea)) {
-      const personsInArea = availablePersons.filter(dp => 
-        dp.deliveryArea?.some(da => da.district === area && da.isPrimary)
+      const personsInArea = availablePersons.filter((dp) =>
+        dp.deliveryArea?.some((da) => da.district === area && da.isPrimary),
       );
 
       const personsToUse = personsInArea.length > 0 ? personsInArea : availablePersons;
 
       const personsWorkload = new Map();
-      personsToUse.forEach(p => personsWorkload.set(p.id, 0));
+      personsToUse.forEach((p) => personsWorkload.set(p.id, 0));
 
       for (const order of areaOrders) {
         let assigned = false;
-        
+
         for (const dp of personsToUse) {
           const workload = personsWorkload.get(dp.id) || 0;
           if (workload < 5) {
             const dpLocation = dp.currentLocation || this.warehouseLocation;
             const estimatedTime = this.calculateRouteDuration(
-              this.calculateDistance(dpLocation, order.location)
+              this.calculateDistance(dpLocation, order.location),
             );
 
             assignments.push({
@@ -123,7 +125,7 @@ class RoutePlannerService {
               deliveryPersonId: dp._id || dp.id,
               deliveryPersonName: dp.name,
               estimatedTime,
-              priority: areaOrders.indexOf(order)
+              priority: areaOrders.indexOf(order),
             });
 
             personsWorkload.set(dp.id, workload + 1);
@@ -144,15 +146,15 @@ class RoutePlannerService {
       stats: {
         totalOrders: orders.length,
         assigned: assignments.length,
-        unassigned: unassignedOrders.length
-      }
+        unassigned: unassignedOrders.length,
+      },
     };
   }
 
   groupOrdersByArea(orders) {
     const groups = {};
-    
-    orders.forEach(order => {
+
+    orders.forEach((order) => {
       const area = order.recipient?.district || 'default';
       if (!groups[area]) {
         groups[area] = [];
@@ -180,8 +182,8 @@ class RoutePlannerService {
         sequence: index + 1,
         distanceFromLast: point.distanceFromLast,
         estimatedDuration: point.estimatedDuration,
-        address: point.address
-      }))
+        address: point.address,
+      })),
     };
   }
 }

@@ -4,7 +4,7 @@ class GreetingCardController {
   async getAllCards(req, res) {
     try {
       const { category, status, isPremium, holidayTag, page = 1, limit = 20 } = req.query;
-      
+
       const query = {};
       if (category) query.category = category;
       if (status) query.status = status;
@@ -25,9 +25,9 @@ class GreetingCardController {
             page: parseInt(page),
             limit: parseInt(limit),
             total,
-            pages: Math.ceil(total / limit)
-          }
-        }
+            pages: Math.ceil(total / limit),
+          },
+        },
       });
     } catch (error) {
       console.error('获取贺卡列表失败:', error);
@@ -64,7 +64,7 @@ class GreetingCardController {
         price,
         status,
         sortOrder,
-        holidayTags
+        holidayTags,
       } = req.body;
 
       const card = new GreetingCard({
@@ -78,7 +78,7 @@ class GreetingCardController {
         price: isPremium ? price : 0,
         status: status || 'active',
         sortOrder,
-        holidayTags
+        holidayTags,
       });
 
       await card.save();
@@ -86,7 +86,7 @@ class GreetingCardController {
       res.status(201).json({
         success: true,
         message: '贺卡创建成功',
-        data: card
+        data: card,
       });
     } catch (error) {
       console.error('创建贺卡失败:', error);
@@ -102,7 +102,7 @@ class GreetingCardController {
       const card = await GreetingCard.findByIdAndUpdate(
         id,
         { $set: updateData },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!card) {
@@ -112,7 +112,7 @@ class GreetingCardController {
       res.json({
         success: true,
         message: '贺卡更新成功',
-        data: card
+        data: card,
       });
     } catch (error) {
       console.error('更新贺卡失败:', error);
@@ -143,7 +143,7 @@ class GreetingCardController {
 
       const cards = await GreetingCard.find({
         category,
-        status: 'active'
+        status: 'active',
       })
         .sort({ sortOrder: 1 })
         .limit(parseInt(limit));
@@ -162,7 +162,7 @@ class GreetingCardController {
 
       const cards = await GreetingCard.find({
         holidayTags: { $in: [holiday] },
-        status: 'active'
+        status: 'active',
       })
         .sort({ sortOrder: 1 })
         .limit(parseInt(limit));
@@ -180,7 +180,7 @@ class GreetingCardController {
 
       const cards = await GreetingCard.find({
         isPremium: true,
-        status: 'active'
+        status: 'active',
       })
         .sort({ sortOrder: 1 })
         .limit(parseInt(limit));
