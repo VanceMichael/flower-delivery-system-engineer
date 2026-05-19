@@ -12,13 +12,6 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-const pageTitles = {
-  'Delivery.vue': '配送管理',
-  'GreetingCardDetail.vue': '贺卡详情',
-  'PromotionDetail.vue': '活动详情',
-  'DeliverySchedule.vue': '预约配送'
-};
-
 const pageTitle = computed(() => {
   const path = route.path;
   if (path.includes('delivery-schedule')) return '预约配送';

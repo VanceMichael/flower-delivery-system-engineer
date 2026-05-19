@@ -80,14 +80,24 @@
         <template #value>+¥{{ deliveryFee.toFixed(2) }}</template>
       </van-cell>
       <van-cell title="优惠金额" v-if="discountAmount > 0">
-        <template #value class="discount">-¥{{ discountAmount.toFixed(2) }}</template>
+        <template #value
+          ><span class="discount">-¥{{ discountAmount.toFixed(2) }}</span></template
+        >
       </van-cell>
       <van-cell title="实付金额">
-        <template #value class="total">¥{{ totalAmount.toFixed(2) }}</template>
+        <template #value
+          ><span class="total">¥{{ totalAmount.toFixed(2) }}</span></template
+        >
       </van-cell>
     </van-cell-group>
 
-    <van-popup v-model:show="showAddressSelector" round position="bottom" class="popup-address-selector" style="height: 60%">
+    <van-popup
+      v-model:show="showAddressSelector"
+      round
+      position="bottom"
+      class="popup-address-selector"
+      style="height: 60%"
+    >
       <template #title>选择收货地址</template>
       <div class="address-list">
         <div
@@ -106,7 +116,9 @@
         </div>
       </div>
       <div class="popup-footer">
-        <van-button type="default" block class="add-address-btn" @click="goToAddAddress">新增收货地址</van-button>
+        <van-button type="default" block class="add-address-btn" @click="goToAddAddress"
+          >新增收货地址</van-button
+        >
       </div>
     </van-popup>
 
@@ -127,7 +139,12 @@
       />
     </van-popup>
 
-    <van-popup v-model:show="showDeliveryPopup" round position="bottom" class="popup-delivery-selector">
+    <van-popup
+      v-model:show="showDeliveryPopup"
+      round
+      position="bottom"
+      class="popup-delivery-selector"
+    >
       <template #title>选择配送方式</template>
       <div class="delivery-options">
         <div
@@ -178,7 +195,9 @@
         </van-cell>
       </div>
       <div class="popup-footer">
-        <van-button type="primary" block class="confirm-btn" @click="showDeliveryPopup = false">确认</van-button>
+        <van-button type="primary" block class="confirm-btn" @click="showDeliveryPopup = false"
+          >确认</van-button
+        >
       </div>
     </van-popup>
 
@@ -196,7 +215,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore, useOrderStore, useUserStore } from '@/store';
-import { orderApi, promotionApi } from '@/api';
+import { orderApi } from '@/api';
 import { showToast, showSuccessToast } from 'vant';
 
 const router = useRouter();
@@ -241,13 +260,13 @@ const getCustomOptionsDisplay = (item) => {
       result.push({
         name: key,
         value: opt.value,
-        price: opt.price || 0
+        price: opt.price || 0,
       });
     } else {
       result.push({
         name: key,
         value: opt,
-        price: 0
+        price: 0,
       });
     }
   }
@@ -278,7 +297,10 @@ const greetingCardPrice = computed(() => {
 const discountAmount = computed(() => orderStore.selectedPromotion?.discount || 0);
 
 const totalAmount = computed(() => {
-  return Math.max(0, goodsAmount.value + greetingCardPrice.value + deliveryFee.value - discountAmount.value);
+  return Math.max(
+    0,
+    goodsAmount.value + greetingCardPrice.value + deliveryFee.value - discountAmount.value,
+  );
 });
 
 const canSubmit = computed(() => {
@@ -297,18 +319,23 @@ const deliveryTimeText = computed(() => {
   return '选择时间';
 });
 
-const defaultImage = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20placeholder%20image&image_size=square';
+const defaultImage =
+  'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20placeholder%20image&image_size=square';
 
 const minDate = new Date();
 const maxDate = new Date();
 maxDate.setDate(maxDate.getDate() + 30);
 
 const timeSlots = [
-  '09:00-11:00', '11:00-13:00', '13:00-15:00',
-  '15:00-17:00', '17:00-19:00', '19:00-21:00'
+  '09:00-11:00',
+  '11:00-13:00',
+  '13:00-15:00',
+  '15:00-17:00',
+  '17:00-19:00',
+  '19:00-21:00',
 ];
 
-const timeSlotColumns = timeSlots.map(slot => ({ text: slot, value: slot }));
+const timeSlotColumns = timeSlots.map((slot) => ({ text: slot, value: slot }));
 
 const selectAddress = (address) => {
   orderStore.setAddress(address);
@@ -358,13 +385,13 @@ const submitOrder = async () => {
     return;
   }
 
-  const orderItems = cartItems.value.map(item => ({
+  const orderItems = cartItems.value.map((item) => ({
     productId: item.productId,
     productName: item.productName,
     image: item.image?.replace(/`/g, '').trim() || '',
     price: item.price,
     quantity: item.quantity,
-    customOptions: item.customOptions
+    customOptions: item.customOptions,
   }));
 
   let scheduledDate = null;
@@ -391,7 +418,7 @@ const submitOrder = async () => {
       greetingCardData = {
         templateId: selectedGreetingCard.value.card?._id,
         message: hasMessage || '',
-        recipientName: hasRecipient || ''
+        recipientName: hasRecipient || '',
       };
     }
   }
@@ -402,15 +429,15 @@ const submitOrder = async () => {
     recipient: {
       name: selectedAddress.value.name,
       phone: selectedAddress.value.phone,
-      address: selectedAddress.value.detail
+      address: selectedAddress.value.detail,
     },
     delivery: {
       type: deliveryType.value,
       scheduledDate: scheduledDate,
       scheduledTimeSlot: selectedTimeSlot.value || null,
-      deliveryFee: deliveryFee.value
+      deliveryFee: deliveryFee.value,
     },
-    greetingCard: greetingCardData
+    greetingCard: greetingCardData,
   };
 
   try {
@@ -426,7 +453,7 @@ const submitOrder = async () => {
 
 onMounted(() => {
   if (addresses.value.length > 0 && !selectedAddress.value) {
-    const defaultAddr = addresses.value.find(a => a.isDefault) || addresses.value[0];
+    const defaultAddr = addresses.value.find((a) => a.isDefault) || addresses.value[0];
     orderStore.setAddress(defaultAddr);
   }
 });

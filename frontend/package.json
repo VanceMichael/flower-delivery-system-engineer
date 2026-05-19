@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "echo no tests yet",
+    "lint": "eslint src/"
   },
   "dependencies": {
     "vue": "^3.3.4",
@@ -19,6 +21,9 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.4",
     "vite": "^4.4.9",
-    "less": "^4.2.0"
+    "less": "^4.2.0",
+    "eslint": "^9.15.0",
+    "@eslint/js": "^9.15.0",
+    "eslint-plugin-vue": "^9.30.0"
   }
 }

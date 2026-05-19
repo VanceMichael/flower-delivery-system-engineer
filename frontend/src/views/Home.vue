@@ -9,7 +9,12 @@
     </div>
 
     <div class="category-section">
-      <div class="category-item" v-for="category in categories" :key="category.id" @click="goToCategory(category)">
+      <div
+        class="category-item"
+        v-for="category in categories"
+        :key="category.id"
+        @click="goToCategory(category)"
+      >
         <img :src="category.icon" alt="" class="category-icon" />
         <span class="category-name">{{ category.name }}</span>
       </div>
@@ -21,11 +26,18 @@
         <span class="more" @click="goToPromotions">更多 ></span>
       </div>
       <div class="promotion-list">
-        <div class="promotion-item" v-for="promotion in activePromotions.slice(0, 3)" :key="promotion._id" @click="goToPromotion(promotion)">
+        <div
+          class="promotion-item"
+          v-for="promotion in activePromotions.slice(0, 3)"
+          :key="promotion._id"
+          @click="goToPromotion(promotion)"
+        >
           <img :src="promotion.bannerImage || defaultBanner" alt="" class="promotion-img" />
           <div class="promotion-info">
             <div class="promotion-name">{{ promotion.name }}</div>
-            <div class="promotion-discount" v-if="promotion.discountType === 'percentage'">{{ promotion.discountValue }}折</div>
+            <div class="promotion-discount" v-if="promotion.discountType === 'percentage'">
+              {{ promotion.discountValue }}折
+            </div>
             <div class="promotion-discount" v-else>减{{ promotion.discountValue }}元</div>
           </div>
         </div>
@@ -38,12 +50,19 @@
         <span class="more" @click="goToProducts('hot')">更多 ></span>
       </div>
       <div class="product-grid">
-        <div class="product-item" v-for="product in hotProducts" :key="product._id" @click="goToProductDetail(product)">
+        <div
+          class="product-item"
+          v-for="product in hotProducts"
+          :key="product._id"
+          @click="goToProductDetail(product)"
+        >
           <img :src="product.images?.[0] || defaultProductImage" alt="" class="product-img" />
           <div class="product-name">{{ product.name }}</div>
           <div class="product-price">
             <span class="current-price">¥{{ product.price }}</span>
-            <span class="original-price" v-if="product.originalPrice">¥{{ product.originalPrice }}</span>
+            <span class="original-price" v-if="product.originalPrice"
+              >¥{{ product.originalPrice }}</span
+            >
           </div>
         </div>
       </div>
@@ -52,19 +71,28 @@
     <van-tabbar v-model="activeTab" route active-color="#1989fa">
       <van-tabbar-item name="home" to="/home">
         <template #icon="props">
-          <van-icon :name="props.active ? 'wap-home' : 'home-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'wap-home' : 'home-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         首页
       </van-tabbar-item>
       <van-tabbar-item name="products" to="/products">
         <template #icon="props">
-          <van-icon :name="props.active ? 'shopping-cart' : 'shopping-cart-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'shopping-cart' : 'shopping-cart-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         商品
       </van-tabbar-item>
       <van-tabbar-item name="cart" to="/cart">
         <template #icon="props">
-          <van-icon :name="props.active ? 'cart' : 'cart-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'cart' : 'cart-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         <template #badge>
           <van-badge :content="cartCount" v-if="cartCount > 0" />
@@ -73,7 +101,10 @@
       </van-tabbar-item>
       <van-tabbar-item name="profile" to="/profile">
         <template #icon="props">
-          <van-icon :name="props.active ? 'user' : 'user-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'user' : 'user-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         我的
       </van-tabbar-item>
@@ -98,14 +129,14 @@ const cartCount = computed(() => cartStore.cartCount);
 const banners = ref([
   { id: 1, image: 'https://picsum.photos/800/400?random=101' },
   { id: 2, image: 'https://picsum.photos/800/400?random=102' },
-  { id: 3, image: 'https://picsum.photos/800/400?random=103' }
+  { id: 3, image: 'https://picsum.photos/800/400?random=103' },
 ]);
 
 const categories = ref([
   { id: 'flower', name: '鲜花', icon: 'https://picsum.photos/100/100?random=1' },
   { id: 'bouquet', name: '花束', icon: 'https://picsum.photos/100/100?random=2' },
   { id: 'gift', name: '礼盒', icon: 'https://picsum.photos/100/100?random=3' },
-  { id: 'promotion', name: '活动', icon: 'https://picsum.photos/100/100?random=4' }
+  { id: 'promotion', name: '活动', icon: 'https://picsum.photos/100/100?random=4' },
 ]);
 
 const defaultProductImage = 'https://picsum.photos/200/200?random=5';
@@ -115,12 +146,36 @@ const fetchHotProducts = async () => {
   try {
     const res = await productApi.getHot({ limit: 4 });
     hotProducts.value = res || [];
-  } catch (e) {
+  } catch (_e) {
     hotProducts.value = [
-      { _id: '1', name: '红玫瑰花束', price: 199, originalPrice: 299, images: ['https://picsum.photos/200/200?random=11'] },
-      { _id: '2', name: '粉色康乃馨礼盒', price: 168, originalPrice: 198, images: ['https://picsum.photos/200/200?random=12'] },
-      { _id: '3', name: '向日葵花束', price: 128, originalPrice: 158, images: ['https://picsum.photos/200/200?random=13'] },
-      { _id: '4', name: '混搭鲜花礼盒', price: 258, originalPrice: 328, images: ['https://picsum.photos/200/200?random=14'] }
+      {
+        _id: '1',
+        name: '红玫瑰花束',
+        price: 199,
+        originalPrice: 299,
+        images: ['https://picsum.photos/200/200?random=11'],
+      },
+      {
+        _id: '2',
+        name: '粉色康乃馨礼盒',
+        price: 168,
+        originalPrice: 198,
+        images: ['https://picsum.photos/200/200?random=12'],
+      },
+      {
+        _id: '3',
+        name: '向日葵花束',
+        price: 128,
+        originalPrice: 158,
+        images: ['https://picsum.photos/200/200?random=13'],
+      },
+      {
+        _id: '4',
+        name: '混搭鲜花礼盒',
+        price: 258,
+        originalPrice: 328,
+        images: ['https://picsum.photos/200/200?random=14'],
+      },
     ];
   }
 };
@@ -129,10 +184,22 @@ const fetchActivePromotions = async () => {
   try {
     const res = await promotionApi.getActive();
     activePromotions.value = res || [];
-  } catch (e) {
+  } catch (_e) {
     activePromotions.value = [
-      { _id: '1', name: '情人节特惠', discountType: 'percentage', discountValue: 80, bannerImage: 'https://picsum.photos/400/200?random=21' },
-      { _id: '2', name: '母亲节感恩', discountType: 'fixed', discountValue: 30, bannerImage: 'https://picsum.photos/400/200?random=22' }
+      {
+        _id: '1',
+        name: '情人节特惠',
+        discountType: 'percentage',
+        discountValue: 80,
+        bannerImage: 'https://picsum.photos/400/200?random=21',
+      },
+      {
+        _id: '2',
+        name: '母亲节感恩',
+        discountType: 'fixed',
+        discountValue: 30,
+        bannerImage: 'https://picsum.photos/400/200?random=22',
+      },
     ];
   }
 };

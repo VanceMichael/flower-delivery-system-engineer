@@ -1,11 +1,6 @@
 <template>
   <div class="product-detail-page">
-    <van-nav-bar
-      title="商品详情"
-      left-text="返回"
-      left-arrow
-      @click-left="goBack"
-    />
+    <van-nav-bar title="商品详情" left-text="返回" left-arrow @click-left="goBack" />
 
     <van-swipe :autoplay="3000" class="product-swipe">
       <van-swipe-item v-for="(img, index) in productImages" :key="index">
@@ -16,12 +11,16 @@
     <div class="product-info-section">
       <div class="price-row">
         <span class="current-price">¥{{ product.price }}</span>
-        <span class="original-price" v-if="product.originalPrice">¥{{ product.originalPrice }}</span>
+        <span class="original-price" v-if="product.originalPrice"
+          >¥{{ product.originalPrice }}</span
+        >
         <span class="sales-count">已售{{ product.salesCount || 0 }}件</span>
       </div>
       <div class="product-name">{{ product.name }}</div>
       <div class="product-tags">
-        <van-tag type="primary" size="mini" v-for="tag in product.tags" :key="tag">{{ tag }}</van-tag>
+        <van-tag type="primary" size="mini" v-for="tag in product.tags" :key="tag">{{
+          tag
+        }}</van-tag>
       </div>
     </div>
 
@@ -29,9 +28,9 @@
       <van-cell title="花材搭配">
         <template #default>
           <div class="materials">
-          <span v-for="(m, i) in product.materials" :key="i" class="material-item">
-            {{ m.name }}({{ m.quantity }})
-          </span>
+            <span v-for="(m, i) in product.materials" :key="i" class="material-item">
+              {{ m.name }}({{ m.quantity }})
+            </span>
           </div>
         </template>
       </van-cell>
@@ -64,7 +63,11 @@
     <van-popup v-model:show="showCustomPopup" round position="bottom" class="popup-custom-options">
       <template #title>自定义搭配</template>
       <div class="custom-options">
-        <div class="option-group" v-for="option in product.customConfig?.options" :key="option.name">
+        <div
+          class="option-group"
+          v-for="option in product.customConfig?.options"
+          :key="option.name"
+        >
           <div class="option-title">{{ option.name }}</div>
           <div class="choice-list">
             <div
@@ -81,14 +84,28 @@
         </div>
       </div>
       <div class="popup-footer">
-        <van-button type="primary" block class="confirm-btn" @click="showCustomPopup = false">确认</van-button>
+        <van-button type="primary" block class="confirm-btn" @click="showCustomPopup = false"
+          >确认</van-button
+        >
       </div>
     </van-popup>
 
-    <van-popup v-model:show="showGreetingPopup" round position="bottom" class="popup-greeting-selector" style="height: 60%">
+    <van-popup
+      v-model:show="showGreetingPopup"
+      round
+      position="bottom"
+      class="popup-greeting-selector"
+      style="height: 60%"
+    >
       <template #title>选择贺卡</template>
       <div class="greeting-cards">
-        <div class="card-item" :class="{ active: selectedCard?._id === card._id }" v-for="card in greetingCards" :key="card._id" @click="selectCard(card)">
+        <div
+          class="card-item"
+          :class="{ active: selectedCard?._id === card._id }"
+          v-for="card in greetingCards"
+          :key="card._id"
+          @click="selectCard(card)"
+        >
           <img :src="card.image" alt="" class="card-image" />
           <div class="card-name">{{ card.name }}</div>
           <div class="card-price" v-if="card.isPremium && card.price > 0">+¥{{ card.price }}</div>
@@ -105,7 +122,9 @@
         />
       </div>
       <div class="popup-footer">
-        <van-button type="primary" block class="confirm-btn" @click="showGreetingPopup = false">确认</van-button>
+        <van-button type="primary" block class="confirm-btn" @click="showGreetingPopup = false"
+          >确认</van-button
+        >
       </div>
     </van-popup>
 
@@ -136,11 +155,7 @@
       </div>
       <div class="stepper-row">
         <span class="stepper-label">数量</span>
-        <van-stepper
-          v-model="quantity"
-          :min="1"
-          :max="99"
-        />
+        <van-stepper v-model="quantity" :min="1" :max="99" />
       </div>
     </div>
     <div class="popup-footer">
@@ -154,7 +169,6 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { productApi, greetingCardApi } from '@/api';
 import { useCartStore, useOrderStore } from '@/store';
-import { showToast } from 'vant';
 
 const route = useRoute();
 const router = useRouter();
@@ -177,7 +191,9 @@ const productImages = computed(() => {
   if (product.value.images?.length > 0) {
     return product.value.images;
   }
-  return ['https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20product%20image&image_size=square'];
+  return [
+    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20product%20image&image_size=square',
+  ];
 });
 
 const fetchProduct = async () => {
@@ -185,7 +201,7 @@ const fetchProduct = async () => {
   try {
     const res = await productApi.getById(productId);
     product.value = res || {};
-  } catch (e) {
+  } catch (_e) {
     product.value = {
       _id: productId,
       name: '红玫瑰99朵花束',
@@ -194,10 +210,12 @@ const fetchProduct = async () => {
       salesCount: 1256,
       tags: ['热销', '情人节'],
       description: '精选进口红玫瑰，搭配精美包装，适合各种浪漫场合。花材新鲜，品质保证。',
-      images: ['https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=99%20red%20roses%20bouquet&image_size=square'],
+      images: [
+        'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=99%20red%20roses%20bouquet&image_size=square',
+      ],
       materials: [
         { name: '红玫瑰', quantity: '99枝' },
-        { name: '满天星', quantity: '1扎' }
+        { name: '满天星', quantity: '1扎' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -207,19 +225,19 @@ const fetchProduct = async () => {
             choices: [
               { value: '红色包装', price: 0 },
               { value: '粉色包装', price: 0 },
-              { value: '黑色包装', price: 10 }
-            ]
+              { value: '黑色包装', price: 10 },
+            ],
           },
           {
             name: '附加礼物',
             choices: [
               { value: '不需要', price: 0 },
               { value: '巧克力', price: 50 },
-              { value: '小熊公仔', price: 68 }
-            ]
-          }
-        ]
-      }
+              { value: '小熊公仔', price: 68 },
+            ],
+          },
+        ],
+      },
     };
   }
 };
@@ -228,11 +246,32 @@ const fetchGreetingCards = async () => {
   try {
     const res = await greetingCardApi.getAll({ limit: 10 });
     greetingCards.value = res?.cards || [];
-  } catch (e) {
+  } catch (_e) {
     greetingCards.value = [
-      { _id: '1', name: '浪漫爱情卡', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=romantic%20love%20greeting%20card&image_size=square', isPremium: false, price: 0 },
-      { _id: '2', name: '感恩祝福卡', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=thanksgiving%20greeting%20card&image_size=square', isPremium: false, price: 0 },
-      { _id: '3', name: '生日贺卡', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=birthday%20greeting%20card&image_size=square', isPremium: true, price: 20 }
+      {
+        _id: '1',
+        name: '浪漫爱情卡',
+        image:
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=romantic%20love%20greeting%20card&image_size=square',
+        isPremium: false,
+        price: 0,
+      },
+      {
+        _id: '2',
+        name: '感恩祝福卡',
+        image:
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=thanksgiving%20greeting%20card&image_size=square',
+        isPremium: false,
+        price: 0,
+      },
+      {
+        _id: '3',
+        name: '生日贺卡',
+        image:
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=birthday%20greeting%20card&image_size=square',
+        isPremium: true,
+        price: 20,
+      },
     ];
   }
 };
@@ -240,7 +279,7 @@ const fetchGreetingCards = async () => {
 const selectCustomOption = (optionName, choice) => {
   selectedCustomOptions.value[optionName] = {
     value: choice.value,
-    price: choice.price || 0
+    price: choice.price || 0,
   };
 };
 
@@ -262,7 +301,11 @@ const addToCart = () => {
 
 const onStepperConfirm = async (val) => {
   quantity.value = val;
-  const success = await cartStore.addToCart(product.value, quantity.value, selectedCustomOptions.value);
+  const success = await cartStore.addToCart(
+    product.value,
+    quantity.value,
+    selectedCustomOptions.value,
+  );
   if (success) {
     showStepper.value = false;
   }

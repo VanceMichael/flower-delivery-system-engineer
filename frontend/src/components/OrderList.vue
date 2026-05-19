@@ -1,15 +1,27 @@
 <template>
   <div class="order-list-page">
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-list
+        v-model:loading="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
         <div v-if="orders.length === 0 && !loading" class="empty-state">
           <van-empty description="暂无订单" />
         </div>
         <div v-else class="order-list">
-          <div class="order-item" v-for="order in orders" :key="order._id" @click="goToOrderDetail(order._id)">
+          <div
+            class="order-item"
+            v-for="order in orders"
+            :key="order._id"
+            @click="goToOrderDetail(order._id)"
+          >
             <div class="order-header">
               <span class="order-no">{{ order.orderNo }}</span>
-              <span class="order-status" :class="getStatusClass(order.status)">{{ getStatusText(order.status) }}</span>
+              <span class="order-status" :class="getStatusClass(order.status)">{{
+                getStatusText(order.status)
+              }}</span>
             </div>
             <div class="order-items">
               <div class="order-product" v-for="item in order.items" :key="item.productId">
@@ -24,14 +36,57 @@
               </div>
             </div>
             <div class="order-footer">
-              <span class="order-total">共{{ order.items.length }}件商品 实付：<span class="total-price">¥{{ order.finalAmount?.toFixed(2) }}</span></span>
+              <span class="order-total"
+                >共{{ order.items.length }}件商品 实付：<span class="total-price"
+                  >¥{{ order.finalAmount?.toFixed(2) }}</span
+                ></span
+              >
               <div class="order-actions">
-                <van-button v-if="order.status === 'pending_payment'" type="primary" size="mini" @click.stop="payOrder(order)">去支付</van-button>
-                <van-button v-if="order.status === 'pending_confirmation'" type="primary" size="mini" @click.stop="confirmOrder(order)">商家确认</van-button>
-                <van-button v-if="order.status === 'preparing'" type="primary" size="mini" @click.stop="startShipping(order)">开始配送</van-button>
-                <van-button v-if="order.status === 'pending_payment' || order.status === 'pending_confirmation'" type="default" size="mini" @click.stop="cancelOrder(order)">取消订单</van-button>
-                <van-button v-if="order.status === 'delivered'" type="danger" size="mini" @click.stop="confirmReceipt(order)">确认收货</van-button>
-                <van-button v-if="['preparing', 'shipping'].includes(order.status)" type="primary" size="mini" plain @click.stop="trackDelivery(order)">配送跟踪</van-button>
+                <van-button
+                  v-if="order.status === 'pending_payment'"
+                  type="primary"
+                  size="mini"
+                  @click.stop="payOrder(order)"
+                  >去支付</van-button
+                >
+                <van-button
+                  v-if="order.status === 'pending_confirmation'"
+                  type="primary"
+                  size="mini"
+                  @click.stop="confirmOrder(order)"
+                  >商家确认</van-button
+                >
+                <van-button
+                  v-if="order.status === 'preparing'"
+                  type="primary"
+                  size="mini"
+                  @click.stop="startShipping(order)"
+                  >开始配送</van-button
+                >
+                <van-button
+                  v-if="
+                    order.status === 'pending_payment' || order.status === 'pending_confirmation'
+                  "
+                  type="default"
+                  size="mini"
+                  @click.stop="cancelOrder(order)"
+                  >取消订单</van-button
+                >
+                <van-button
+                  v-if="order.status === 'delivered'"
+                  type="danger"
+                  size="mini"
+                  @click.stop="confirmReceipt(order)"
+                  >确认收货</van-button
+                >
+                <van-button
+                  v-if="['preparing', 'shipping'].includes(order.status)"
+                  type="primary"
+                  size="mini"
+                  plain
+                  @click.stop="trackDelivery(order)"
+                  >配送跟踪</van-button
+                >
               </div>
             </div>
           </div>
@@ -42,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { orderApi } from '@/api';
 import { useUserStore } from '@/store';
@@ -51,8 +106,8 @@ import { showConfirmDialog, showSuccessToast, showToast } from 'vant';
 const props = defineProps({
   statusFilter: {
     type: [String, Array],
-    default: null
-  }
+    default: null,
+  },
 });
 
 const router = useRouter();
@@ -65,17 +120,18 @@ const refreshing = ref(false);
 const page = ref(1);
 const pageSize = 10;
 
-const defaultImage = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20placeholder%20image&image_size=square';
+const defaultImage =
+  'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20placeholder%20image&image_size=square';
 
 const statusMap = {
-  'pending_payment': '待付款',
-  'pending_confirmation': '待确认',
-  'preparing': '准备中',
-  'shipping': '配送中',
-  'delivered': '已送达',
-  'completed': '已完成',
-  'cancelled': '已取消',
-  'refunded': '已退款'
+  pending_payment: '待付款',
+  pending_confirmation: '待确认',
+  preparing: '准备中',
+  shipping: '配送中',
+  delivered: '已送达',
+  completed: '已完成',
+  cancelled: '已取消',
+  refunded: '已退款',
 };
 
 const getStatusText = (status) => {
@@ -84,14 +140,14 @@ const getStatusText = (status) => {
 
 const getStatusClass = (status) => {
   const classMap = {
-    'pending_payment': 'status-pending',
-    'pending_confirmation': 'status-pending',
-    'preparing': 'status-preparing',
-    'shipping': 'status-shipping',
-    'delivered': 'status-delivered',
-    'completed': 'status-completed',
-    'cancelled': 'status-cancelled',
-    'refunded': 'status-refunded'
+    pending_payment: 'status-pending',
+    pending_confirmation: 'status-pending',
+    preparing: 'status-preparing',
+    shipping: 'status-shipping',
+    delivered: 'status-delivered',
+    completed: 'status-completed',
+    cancelled: 'status-cancelled',
+    refunded: 'status-refunded',
   };
   return classMap[status] || '';
 };
@@ -104,7 +160,7 @@ const fetchOrders = async () => {
   try {
     const params = {
       page: page.value,
-      limit: pageSize
+      limit: pageSize,
     };
 
     if (props.statusFilter) {
@@ -156,7 +212,7 @@ const payOrder = async (order) => {
     await orderApi.pay(order._id, { paymentMethod: 'wechat' });
     showSuccessToast('支付成功');
     onRefresh();
-  } catch (e) {
+  } catch (_e) {
     showToast('支付失败');
   }
 };
@@ -164,61 +220,69 @@ const payOrder = async (order) => {
 const cancelOrder = (order) => {
   showConfirmDialog({
     title: '提示',
-    message: '确定要取消该订单吗？'
-  }).then(async () => {
-    try {
-      await orderApi.updateStatus(order._id, { status: 'cancelled', cancelReason: '用户取消' });
-      showSuccessToast('订单已取消');
-      onRefresh();
-    } catch (e) {
-      showToast('取消失败');
-    }
-  }).catch(() => {});
+    message: '确定要取消该订单吗？',
+  })
+    .then(async () => {
+      try {
+        await orderApi.updateStatus(order._id, { status: 'cancelled', cancelReason: '用户取消' });
+        showSuccessToast('订单已取消');
+        onRefresh();
+      } catch (_e) {
+        showToast('取消失败');
+      }
+    })
+    .catch(() => {});
 };
 
 const confirmOrder = (order) => {
   showConfirmDialog({
     title: '提示',
-    message: '确认接单？确认后订单将进入准备状态'
-  }).then(async () => {
-    try {
-      await orderApi.updateStatus(order._id, { status: 'preparing' });
-      showSuccessToast('已确认接单');
-      onRefresh();
-    } catch (e) {
-      showToast('确认失败');
-    }
-  }).catch(() => {});
+    message: '确认接单？确认后订单将进入准备状态',
+  })
+    .then(async () => {
+      try {
+        await orderApi.updateStatus(order._id, { status: 'preparing' });
+        showSuccessToast('已确认接单');
+        onRefresh();
+      } catch (_e) {
+        showToast('确认失败');
+      }
+    })
+    .catch(() => {});
 };
 
 const startShipping = (order) => {
   showConfirmDialog({
     title: '提示',
-    message: '确认开始配送？'
-  }).then(async () => {
-    try {
-      await orderApi.updateStatus(order._id, { status: 'shipping' });
-      showSuccessToast('已开始配送');
-      onRefresh();
-    } catch (e) {
-      showToast('操作失败');
-    }
-  }).catch(() => {});
+    message: '确认开始配送？',
+  })
+    .then(async () => {
+      try {
+        await orderApi.updateStatus(order._id, { status: 'shipping' });
+        showSuccessToast('已开始配送');
+        onRefresh();
+      } catch (_e) {
+        showToast('操作失败');
+      }
+    })
+    .catch(() => {});
 };
 
 const confirmReceipt = (order) => {
   showConfirmDialog({
     title: '提示',
-    message: '确认已收到商品？'
-  }).then(async () => {
-    try {
-      await orderApi.updateStatus(order._id, { status: 'completed' });
-      showSuccessToast('确认成功');
-      onRefresh();
-    } catch (e) {
-      showToast('确认失败');
-    }
-  }).catch(() => {});
+    message: '确认已收到商品？',
+  })
+    .then(async () => {
+      try {
+        await orderApi.updateStatus(order._id, { status: 'completed' });
+        showSuccessToast('确认成功');
+        onRefresh();
+      } catch (_e) {
+        showToast('确认失败');
+      }
+    })
+    .catch(() => {});
 };
 
 const trackDelivery = (order) => {
@@ -229,7 +293,7 @@ watch(
   () => props.statusFilter,
   () => {
     onRefresh();
-  }
+  },
 );
 
 onMounted(() => {
