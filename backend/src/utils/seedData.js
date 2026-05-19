@@ -24,9 +24,9 @@ const demoUsers = [
         city: '北京市',
         district: '朝阳区',
         detail: '建国路88号SOHO现代城A座',
-        isDefault: true
-      }
-    ]
+        isDefault: true,
+      },
+    ],
   },
   {
     username: 'user1',
@@ -42,9 +42,9 @@ const demoUsers = [
         city: '北京市',
         district: '海淀区',
         detail: '中关村大街1号',
-        isDefault: true
-      }
-    ]
+        isDefault: true,
+      },
+    ],
   },
   {
     username: 'user2',
@@ -60,45 +60,45 @@ const demoUsers = [
         city: '北京市',
         district: '西城区',
         detail: '西单北大街120号',
-        isDefault: true
-      }
-    ]
+        isDefault: true,
+      },
+    ],
   },
   {
     username: 'delivery1',
     email: 'delivery1@flower.com',
     password: '123456',
     phone: '13800000004',
-    role: 'delivery'
+    role: 'delivery',
   },
   {
     username: 'delivery2',
     email: 'delivery2@flower.com',
     password: '123456',
     phone: '13800000005',
-    role: 'delivery'
-  }
+    role: 'delivery',
+  },
 ];
 
 const seedUsers = async () => {
   const hashedPassword = await hashPassword('123456');
-  
+
   for (const demoUser of demoUsers) {
     const existingUser = await User.findOne({ username: demoUser.username });
-    
+
     if (existingUser) {
       const isPasswordValid = await existingUser.comparePassword('123456');
       if (!isPasswordValid) {
         await User.updateOne(
           { username: demoUser.username },
-          { $set: { password: hashedPassword } }
+          { $set: { password: hashedPassword } },
         );
         console.log(`已更新用户 ${demoUser.username} 的密码`);
       }
     } else {
       const userData = { ...demoUser };
       delete userData.password;
-      
+
       const newUser = new User(userData);
       newUser.password = '123456';
       await newUser.save();
@@ -127,7 +127,7 @@ const seedProducts = async () => {
       tags: ['热销', '情人节'],
       materials: [{ name: '红玫瑰', quantity: '1枝' }],
       status: 'active',
-      salesCount: 5234
+      salesCount: 5234,
     },
     {
       name: '粉色康乃馨',
@@ -141,7 +141,7 @@ const seedProducts = async () => {
       tags: ['母亲节', '感恩'],
       materials: [{ name: '粉色康乃馨', quantity: '1枝' }],
       status: 'active',
-      salesCount: 3456
+      salesCount: 3456,
     },
     {
       name: '向日葵',
@@ -155,7 +155,7 @@ const seedProducts = async () => {
       tags: ['毕业季', '祝福'],
       materials: [{ name: '向日葵', quantity: '1枝' }],
       status: 'active',
-      salesCount: 2890
+      salesCount: 2890,
     },
     {
       name: '白百合',
@@ -169,7 +169,7 @@ const seedProducts = async () => {
       tags: ['生日', '祝福'],
       materials: [{ name: '白百合', quantity: '1枝' }],
       status: 'active',
-      salesCount: 2100
+      salesCount: 2100,
     },
     {
       name: '粉玫瑰',
@@ -183,7 +183,7 @@ const seedProducts = async () => {
       tags: ['生日', '爱情'],
       materials: [{ name: '粉玫瑰', quantity: '1枝' }],
       status: 'active',
-      salesCount: 1980
+      salesCount: 1980,
     },
     {
       name: '郁金香',
@@ -197,7 +197,7 @@ const seedProducts = async () => {
       tags: ['春季', '优雅'],
       materials: [{ name: '郁金香', quantity: '1枝' }],
       status: 'active',
-      salesCount: 1560
+      salesCount: 1560,
     },
     {
       name: '红玫瑰99朵花束',
@@ -211,7 +211,7 @@ const seedProducts = async () => {
       tags: ['热销', '情人节'],
       materials: [
         { name: '红玫瑰', quantity: '99枝' },
-        { name: '满天星', quantity: '1扎' }
+        { name: '满天星', quantity: '1扎' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -221,21 +221,21 @@ const seedProducts = async () => {
             choices: [
               { value: '红色包装', price: 0 },
               { value: '黑色包装', price: 0 },
-              { value: '白色包装', price: 0 }
-            ]
+              { value: '白色包装', price: 0 },
+            ],
           },
           {
             name: '附加礼物',
             choices: [
               { value: '不需要', price: 0 },
               { value: '精美巧克力', price: 50 },
-              { value: '可爱小熊', price: 68 }
-            ]
-          }
-        ]
+              { value: '可爱小熊', price: 68 },
+            ],
+          },
+        ],
       },
       status: 'active',
-      salesCount: 1256
+      salesCount: 1256,
     },
     {
       name: '向日葵混搭花束',
@@ -250,7 +250,7 @@ const seedProducts = async () => {
       materials: [
         { name: '向日葵', quantity: '5枝' },
         { name: '满天星', quantity: '1扎' },
-        { name: '洋桔梗', quantity: '3枝' }
+        { name: '洋桔梗', quantity: '3枝' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -259,13 +259,13 @@ const seedProducts = async () => {
             name: '包装颜色',
             choices: [
               { value: '牛皮纸', price: 0 },
-              { value: '蓝色包装', price: 0 }
-            ]
-          }
-        ]
+              { value: '蓝色包装', price: 0 },
+            ],
+          },
+        ],
       },
       status: 'active',
-      salesCount: 823
+      salesCount: 823,
     },
     {
       name: '百合玫瑰花束',
@@ -280,10 +280,10 @@ const seedProducts = async () => {
       materials: [
         { name: '白百合', quantity: '3枝' },
         { name: '红玫瑰', quantity: '11枝' },
-        { name: '黄莺', quantity: '适量' }
+        { name: '黄莺', quantity: '适量' },
       ],
       status: 'active',
-      salesCount: 456
+      salesCount: 456,
     },
     {
       name: '粉色康乃馨花束',
@@ -297,10 +297,10 @@ const seedProducts = async () => {
       tags: ['母亲节', '感恩'],
       materials: [
         { name: '粉色康乃馨', quantity: '19枝' },
-        { name: '满天星', quantity: '适量' }
+        { name: '满天星', quantity: '适量' },
       ],
       status: 'active',
-      salesCount: 678
+      salesCount: 678,
     },
     {
       name: '粉玫瑰花束',
@@ -314,7 +314,7 @@ const seedProducts = async () => {
       tags: ['生日', '爱情'],
       materials: [
         { name: '粉玫瑰', quantity: '19枝' },
-        { name: '满天星', quantity: '适量' }
+        { name: '满天星', quantity: '适量' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -323,20 +323,20 @@ const seedProducts = async () => {
             name: '包装颜色',
             choices: [
               { value: '粉色包装', price: 0 },
-              { value: '白色包装', price: 0 }
-            ]
+              { value: '白色包装', price: 0 },
+            ],
           },
           {
             name: '附加礼物',
             choices: [
               { value: '不需要', price: 0 },
-              { value: '精美巧克力', price: 50 }
-            ]
-          }
-        ]
+              { value: '精美巧克力', price: 50 },
+            ],
+          },
+        ],
       },
       status: 'active',
-      salesCount: 567
+      salesCount: 567,
     },
     {
       name: '郁金香花束',
@@ -350,10 +350,10 @@ const seedProducts = async () => {
       tags: ['春季', '优雅'],
       materials: [
         { name: '郁金香', quantity: '15枝' },
-        { name: '尤加利叶', quantity: '适量' }
+        { name: '尤加利叶', quantity: '适量' },
       ],
       status: 'active',
-      salesCount: 345
+      salesCount: 345,
     },
     {
       name: '粉色康乃馨礼盒',
@@ -367,10 +367,10 @@ const seedProducts = async () => {
       tags: ['母亲节', '感恩'],
       materials: [
         { name: '粉色康乃馨', quantity: '19枝' },
-        { name: '满天星', quantity: '适量' }
+        { name: '满天星', quantity: '适量' },
       ],
       status: 'active',
-      salesCount: 856
+      salesCount: 856,
     },
     {
       name: '情人节限定礼盒',
@@ -385,7 +385,7 @@ const seedProducts = async () => {
       materials: [
         { name: '红玫瑰', quantity: '52枝' },
         { name: '进口巧克力', quantity: '1盒' },
-        { name: '可爱小熊', quantity: '1只' }
+        { name: '可爱小熊', quantity: '1只' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -394,13 +394,13 @@ const seedProducts = async () => {
             name: '包装颜色',
             choices: [
               { value: '红色浪漫', price: 0 },
-              { value: '粉色温馨', price: 0 }
-            ]
-          }
-        ]
+              { value: '粉色温馨', price: 0 },
+            ],
+          },
+        ],
       },
       status: 'active',
-      salesCount: 234
+      salesCount: 234,
     },
     {
       name: '生日花束礼盒',
@@ -415,7 +415,7 @@ const seedProducts = async () => {
       materials: [
         { name: '粉玫瑰', quantity: '11枝' },
         { name: '洋桔梗', quantity: '3枝' },
-        { name: '满天星', quantity: '适量' }
+        { name: '满天星', quantity: '适量' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -425,13 +425,13 @@ const seedProducts = async () => {
             choices: [
               { value: '粉色', price: 0 },
               { value: '蓝色', price: 0 },
-              { value: '紫色', price: 0 }
-            ]
-          }
-        ]
+              { value: '紫色', price: 0 },
+            ],
+          },
+        ],
       },
       status: 'active',
-      salesCount: 378
+      salesCount: 378,
     },
     {
       name: '混搭鲜花礼盒',
@@ -446,7 +446,7 @@ const seedProducts = async () => {
       materials: [
         { name: '红玫瑰', quantity: '11枝' },
         { name: '白百合', quantity: '2枝' },
-        { name: '黄莺', quantity: '适量' }
+        { name: '黄莺', quantity: '适量' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -455,13 +455,13 @@ const seedProducts = async () => {
             name: '包装颜色',
             choices: [
               { value: '红色', price: 0 },
-              { value: '黑色', price: 0 }
-            ]
-          }
-        ]
+              { value: '黑色', price: 0 },
+            ],
+          },
+        ],
       },
       status: 'active',
-      salesCount: 456
+      salesCount: 456,
     },
     {
       name: '母亲节感恩礼盒',
@@ -475,10 +475,10 @@ const seedProducts = async () => {
       tags: ['母亲节', '感恩'],
       materials: [
         { name: '粉色康乃馨', quantity: '22枝' },
-        { name: '满天星', quantity: '1扎' }
+        { name: '满天星', quantity: '1扎' },
       ],
       status: 'active',
-      salesCount: 289
+      salesCount: 289,
     },
     {
       name: '圣诞限定礼盒',
@@ -492,7 +492,7 @@ const seedProducts = async () => {
       tags: ['圣诞', '限定'],
       materials: [
         { name: '红玫瑰', quantity: '22枝' },
-        { name: '圣诞装饰', quantity: '1套' }
+        { name: '圣诞装饰', quantity: '1套' },
       ],
       customConfig: {
         isCustomizable: true,
@@ -501,14 +501,14 @@ const seedProducts = async () => {
             name: '包装颜色',
             choices: [
               { value: '圣诞红', price: 0 },
-              { value: '圣诞绿', price: 0 }
-            ]
-          }
-        ]
+              { value: '圣诞绿', price: 0 },
+            ],
+          },
+        ],
       },
       status: 'active',
-      salesCount: 167
-    }
+      salesCount: 167,
+    },
   ];
 
   await Product.insertMany(products);
@@ -531,12 +531,12 @@ const seedGreetingCards = async () => {
       theme: 'romantic',
       defaultMessages: [
         { title: '经典告白', content: '亲爱的，遇见你是我这辈子最大的幸运，我爱你！' },
-        { title: '甜蜜情话', content: '想你的时候，心就像装满了蜂蜜，甜甜的。' }
+        { title: '甜蜜情话', content: '想你的时候，心就像装满了蜂蜜，甜甜的。' },
       ],
       isPremium: false,
       price: 0,
       status: 'active',
-      holidayTags: ['valentines', 'chinese_valentines']
+      holidayTags: ['valentines', 'chinese_valentines'],
     },
     {
       name: '生日祝福卡',
@@ -546,11 +546,11 @@ const seedGreetingCards = async () => {
       theme: 'birthday',
       defaultMessages: [
         { title: '温馨祝福', content: '生日快乐！愿你每一天都充满阳光和快乐！' },
-        { title: '特别祝福', content: '在这个特别的日子里，祝你生日快乐，岁岁平安！' }
+        { title: '特别祝福', content: '在这个特别的日子里，祝你生日快乐，岁岁平安！' },
       ],
       isPremium: false,
       price: 0,
-      status: 'active'
+      status: 'active',
     },
     {
       name: '感恩母亲卡',
@@ -560,12 +560,12 @@ const seedGreetingCards = async () => {
       theme: 'gratitude',
       defaultMessages: [
         { title: '感恩母亲', content: '妈妈，感谢您给了我生命，给了我全部的爱。我爱您！' },
-        { title: '温馨祝福', content: '亲爱的妈妈，您辛苦了，愿您永远健康快乐！' }
+        { title: '温馨祝福', content: '亲爱的妈妈，您辛苦了，愿您永远健康快乐！' },
       ],
       isPremium: false,
       price: 0,
       status: 'active',
-      holidayTags: ['mothers']
+      holidayTags: ['mothers'],
     },
     {
       name: '节日祝福卡',
@@ -575,12 +575,12 @@ const seedGreetingCards = async () => {
       theme: 'festive',
       defaultMessages: [
         { title: '新年快乐', content: '新年快乐！愿新的一年万事如意，幸福安康！' },
-        { title: '节日祝福', content: '佳节来临之际，祝你节日快乐，阖家幸福！' }
+        { title: '节日祝福', content: '佳节来临之际，祝你节日快乐，阖家幸福！' },
       ],
       isPremium: false,
       price: 0,
       status: 'active',
-      holidayTags: ['new_year', 'spring_festival']
+      holidayTags: ['new_year', 'spring_festival'],
     },
     {
       name: '精美爱情卡',
@@ -589,12 +589,12 @@ const seedGreetingCards = async () => {
       image: 'https://picsum.photos/300/200?random=205',
       theme: 'premium-love',
       defaultMessages: [
-        { title: '深情告白', content: '亲爱的，你是我生命中最美的风景，我爱你，永远。' }
+        { title: '深情告白', content: '亲爱的，你是我生命中最美的风景，我爱你，永远。' },
       ],
       isPremium: true,
       price: 20,
       status: 'active',
-      holidayTags: ['valentines']
+      holidayTags: ['valentines'],
     },
     {
       name: '精美生日卡',
@@ -603,12 +603,12 @@ const seedGreetingCards = async () => {
       image: 'https://picsum.photos/300/200?random=206',
       theme: 'premium-birthday',
       defaultMessages: [
-        { title: '尊贵祝福', content: '在这个特别的日子里，祝你生日快乐，前程似锦！' }
+        { title: '尊贵祝福', content: '在这个特别的日子里，祝你生日快乐，前程似锦！' },
       ],
       isPremium: true,
       price: 20,
-      status: 'active'
-    }
+      status: 'active',
+    },
   ];
 
   await GreetingCard.insertMany(cards);
@@ -638,7 +638,7 @@ const seedHolidayPromotions = async () => {
       applicableCategories: ['flower', 'bouquet', 'gift'],
       bannerImage: 'https://picsum.photos/800/300?random=301',
       isFeatured: true,
-      status: 'active'
+      status: 'active',
     },
     {
       name: '母亲节感恩活动',
@@ -652,7 +652,7 @@ const seedHolidayPromotions = async () => {
       applicableCategories: ['bouquet', 'gift'],
       bannerImage: 'https://picsum.photos/800/300?random=302',
       isFeatured: true,
-      status: 'active'
+      status: 'active',
     },
     {
       name: '七夕节浪漫活动',
@@ -666,7 +666,7 @@ const seedHolidayPromotions = async () => {
       applicableCategories: ['flower', 'bouquet', 'gift'],
       bannerImage: 'https://picsum.photos/800/300?random=303',
       isFeatured: true,
-      status: 'active'
+      status: 'active',
     },
     {
       name: '圣诞节狂欢',
@@ -680,7 +680,7 @@ const seedHolidayPromotions = async () => {
       applicableCategories: ['bouquet', 'gift'],
       bannerImage: 'https://picsum.photos/800/300?random=304',
       isFeatured: true,
-      status: 'active'
+      status: 'active',
     },
     {
       name: '新年特惠活动',
@@ -694,8 +694,8 @@ const seedHolidayPromotions = async () => {
       applicableCategories: ['flower', 'bouquet', 'gift'],
       bannerImage: 'https://picsum.photos/800/300?random=305',
       isFeatured: true,
-      status: 'active'
-    }
+      status: 'active',
+    },
   ];
 
   await HolidayPromotion.insertMany(promotions);
@@ -717,11 +717,11 @@ const seedDeliveryPersons = async () => {
       status: 'available',
       deliveryArea: [
         { district: '朝阳区', isPrimary: true },
-        { district: '东城区', isPrimary: false }
+        { district: '东城区', isPrimary: false },
       ],
       totalDeliveries: 1256,
       rating: 4.8,
-      isActive: true
+      isActive: true,
     },
     {
       name: '李师傅',
@@ -730,24 +730,22 @@ const seedDeliveryPersons = async () => {
       status: 'available',
       deliveryArea: [
         { district: '海淀区', isPrimary: true },
-        { district: '西城区', isPrimary: false }
+        { district: '西城区', isPrimary: false },
       ],
       totalDeliveries: 987,
       rating: 4.9,
-      isActive: true
+      isActive: true,
     },
     {
       name: '张师傅',
       phone: '13800001003',
       employeeNo: 'DP003',
       status: 'offline',
-      deliveryArea: [
-        { district: '丰台区', isPrimary: true }
-      ],
+      deliveryArea: [{ district: '丰台区', isPrimary: true }],
       totalDeliveries: 654,
       rating: 4.7,
-      isActive: true
-    }
+      isActive: true,
+    },
   ];
 
   await DeliveryPerson.insertMany(deliveryPersons);

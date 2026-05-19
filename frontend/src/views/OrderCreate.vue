@@ -10,7 +10,9 @@
               <span>{{ selectedAddress.name }}</span>
               <span class="phone">{{ selectedAddress.phone }}</span>
             </div>
-            <div class="address-detail">{{ selectedAddress.detail }}</div>
+            <div class="address-detail">
+              {{ selectedAddress.detail }}
+            </div>
           </div>
         </template>
       </van-cell>
@@ -35,14 +37,16 @@
     </van-cell-group>
 
     <van-cell-group inset title="商品清单">
-      <div class="order-item" v-for="item in cartItems" :key="item.cartId">
+      <div v-for="item in cartItems" :key="item.cartId" class="order-item">
         <img :src="item.image || defaultImage" alt="" class="item-image" />
         <div class="item-info">
-          <div class="item-name">{{ item.productName }}</div>
-          <div class="item-custom" v-if="getCustomOptionsDisplay(item).length > 0">
-            <div class="custom-detail" v-for="opt in getCustomOptionsDisplay(item)" :key="opt.name">
+          <div class="item-name">
+            {{ item.productName }}
+          </div>
+          <div v-if="getCustomOptionsDisplay(item).length > 0" class="item-custom">
+            <div v-for="opt in getCustomOptionsDisplay(item)" :key="opt.name" class="custom-detail">
               <span class="custom-name">{{ opt.name }}：{{ opt.value }}</span>
-              <span class="custom-price" v-if="opt.price > 0">+¥{{ opt.price }}</span>
+              <span v-if="opt.price > 0" class="custom-price">+¥{{ opt.price }}</span>
             </div>
           </div>
           <div class="item-price-row">
@@ -53,13 +57,13 @@
       </div>
     </van-cell-group>
 
-    <van-cell-group inset title="贺卡信息" v-if="selectedGreetingCard">
+    <van-cell-group v-if="selectedGreetingCard" inset title="贺卡信息">
       <van-cell title="贺卡模板">
         <template #value>
           <span>{{ selectedGreetingCard.card?.name || '未选择' }}</span>
         </template>
       </van-cell>
-      <van-cell title="祝福语" v-if="selectedGreetingCard.message">
+      <van-cell v-if="selectedGreetingCard.message" title="祝福语">
         <template #value>
           <span>{{ selectedGreetingCard.message }}</span>
         </template>
@@ -68,45 +72,59 @@
 
     <van-cell-group inset title="费用明细">
       <van-cell title="商品金额">
-        <template #value>¥{{ baseGoodsAmount.toFixed(2) }}</template>
+        <template #value> ¥{{ baseGoodsAmount.toFixed(2) }} </template>
       </van-cell>
-      <van-cell title="自定义选项费" v-if="customOptionsTotal > 0">
-        <template #value>+¥{{ customOptionsTotal.toFixed(2) }}</template>
+      <van-cell v-if="customOptionsTotal > 0" title="自定义选项费">
+        <template #value> +¥{{ customOptionsTotal.toFixed(2) }} </template>
       </van-cell>
-      <van-cell title="贺卡费" v-if="greetingCardPrice > 0">
-        <template #value>+¥{{ greetingCardPrice.toFixed(2) }}</template>
+      <van-cell v-if="greetingCardPrice > 0" title="贺卡费">
+        <template #value> +¥{{ greetingCardPrice.toFixed(2) }} </template>
       </van-cell>
       <van-cell title="配送费">
-        <template #value>+¥{{ deliveryFee.toFixed(2) }}</template>
+        <template #value> +¥{{ deliveryFee.toFixed(2) }} </template>
       </van-cell>
-      <van-cell title="优惠金额" v-if="discountAmount > 0">
-        <template #value class="discount">-¥{{ discountAmount.toFixed(2) }}</template>
+      <van-cell v-if="discountAmount > 0" title="优惠金额">
+        <template #value>
+          <span class="discount"> -¥{{ discountAmount.toFixed(2) }} </span>
+        </template>
       </van-cell>
       <van-cell title="实付金额">
-        <template #value class="total">¥{{ totalAmount.toFixed(2) }}</template>
+        <template #value>
+          <span class="total"> ¥{{ totalAmount.toFixed(2) }} </span>
+        </template>
       </van-cell>
     </van-cell-group>
 
-    <van-popup v-model:show="showAddressSelector" round position="bottom" class="popup-address-selector" style="height: 60%">
-      <template #title>选择收货地址</template>
+    <van-popup
+      v-model:show="showAddressSelector"
+      round
+      position="bottom"
+      class="popup-address-selector"
+      style="height: 60%"
+    >
+      <template #title> 选择收货地址 </template>
       <div class="address-list">
         <div
-          class="address-item"
-          :class="{ active: selectedAddress?.id === address.id }"
           v-for="address in addresses"
           :key="address.id"
+          class="address-item"
+          :class="{ active: selectedAddress?.id === address.id }"
           @click="selectAddress(address)"
         >
           <div class="address-name-row">
             <span class="name">{{ address.name }}</span>
             <span class="phone">{{ address.phone }}</span>
-            <van-tag v-if="address.isDefault" size="mini" type="primary">默认</van-tag>
+            <van-tag v-if="address.isDefault" size="mini" type="primary"> 默认 </van-tag>
           </div>
-          <div class="address-detail">{{ address.detail }}</div>
+          <div class="address-detail">
+            {{ address.detail }}
+          </div>
         </div>
       </div>
       <div class="popup-footer">
-        <van-button type="default" block class="add-address-btn" @click="goToAddAddress">新增收货地址</van-button>
+        <van-button type="default" block class="add-address-btn" @click="goToAddAddress">
+          新增收货地址
+        </van-button>
       </div>
     </van-popup>
 
@@ -127,8 +145,13 @@
       />
     </van-popup>
 
-    <van-popup v-model:show="showDeliveryPopup" round position="bottom" class="popup-delivery-selector">
-      <template #title>选择配送方式</template>
+    <van-popup
+      v-model:show="showDeliveryPopup"
+      round
+      position="bottom"
+      class="popup-delivery-selector"
+    >
+      <template #title> 选择配送方式 </template>
       <div class="delivery-options">
         <div
           class="delivery-option"
@@ -161,11 +184,13 @@
             <div class="option-name">预约配送</div>
             <div class="option-desc">指定时间送达</div>
           </div>
-          <div class="option-right" v-if="deliveryType === 'scheduled'">{{ deliveryTimeText }}</div>
-          <div class="option-right" v-else>选择时间</div>
+          <div v-if="deliveryType === 'scheduled'" class="option-right">
+            {{ deliveryTimeText }}
+          </div>
+          <div v-else class="option-right">选择时间</div>
         </div>
       </div>
-      <div class="scheduled-time" v-if="deliveryType === 'scheduled'">
+      <div v-if="deliveryType === 'scheduled'" class="scheduled-time">
         <van-cell title="选择日期" is-link @click="openCalendar">
           <template #value>
             <span>{{ selectedDate || '请选择' }}</span>
@@ -178,7 +203,9 @@
         </van-cell>
       </div>
       <div class="popup-footer">
-        <van-button type="primary" block class="confirm-btn" @click="showDeliveryPopup = false">确认</van-button>
+        <van-button type="primary" block class="confirm-btn" @click="showDeliveryPopup = false">
+          确认
+        </van-button>
       </div>
     </van-popup>
 
@@ -187,7 +214,7 @@
         <span class="total-label">实付:</span>
         <span class="total-price">¥{{ totalAmount.toFixed(2) }}</span>
       </div>
-      <van-button type="danger" :disabled="!canSubmit" @click="submitOrder">提交订单</van-button>
+      <van-button type="danger" :disabled="!canSubmit" @click="submitOrder"> 提交订单 </van-button>
     </div>
   </div>
 </template>
@@ -196,7 +223,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore, useOrderStore, useUserStore } from '@/store';
-import { orderApi, promotionApi } from '@/api';
+import { orderApi } from '@/api';
 import { showToast, showSuccessToast } from 'vant';
 
 const router = useRouter();
@@ -220,7 +247,9 @@ const selectedAddress = computed(() => orderStore.selectedAddress);
 const selectedGreetingCard = computed(() => orderStore.selectedGreetingCard);
 
 const getCustomOptionsPrice = (item) => {
-  if (!item.customOptions) return 0;
+  if (!item.customOptions) {
+    return 0;
+  }
   let total = 0;
   const options = Object.values(item.customOptions);
   for (const opt of options) {
@@ -232,7 +261,9 @@ const getCustomOptionsPrice = (item) => {
 };
 
 const getCustomOptionsDisplay = (item) => {
-  if (!item.customOptions) return [];
+  if (!item.customOptions) {
+    return [];
+  }
   const result = [];
   const keys = Object.keys(item.customOptions);
   for (const key of keys) {
@@ -241,13 +272,13 @@ const getCustomOptionsDisplay = (item) => {
       result.push({
         name: key,
         value: opt.value,
-        price: opt.price || 0
+        price: opt.price || 0,
       });
     } else {
       result.push({
         name: key,
         value: opt,
-        price: 0
+        price: 0,
       });
     }
   }
@@ -278,7 +309,10 @@ const greetingCardPrice = computed(() => {
 const discountAmount = computed(() => orderStore.selectedPromotion?.discount || 0);
 
 const totalAmount = computed(() => {
-  return Math.max(0, goodsAmount.value + greetingCardPrice.value + deliveryFee.value - discountAmount.value);
+  return Math.max(
+    0,
+    goodsAmount.value + greetingCardPrice.value + deliveryFee.value - discountAmount.value,
+  );
 });
 
 const canSubmit = computed(() => {
@@ -297,18 +331,23 @@ const deliveryTimeText = computed(() => {
   return '选择时间';
 });
 
-const defaultImage = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20placeholder%20image&image_size=square';
+const defaultImage =
+  'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20placeholder%20image&image_size=square';
 
 const minDate = new Date();
 const maxDate = new Date();
 maxDate.setDate(maxDate.getDate() + 30);
 
 const timeSlots = [
-  '09:00-11:00', '11:00-13:00', '13:00-15:00',
-  '15:00-17:00', '17:00-19:00', '19:00-21:00'
+  '09:00-11:00',
+  '11:00-13:00',
+  '13:00-15:00',
+  '15:00-17:00',
+  '17:00-19:00',
+  '19:00-21:00',
 ];
 
-const timeSlotColumns = timeSlots.map(slot => ({ text: slot, value: slot }));
+const timeSlotColumns = timeSlots.map((slot) => ({ text: slot, value: slot }));
 
 const selectAddress = (address) => {
   orderStore.setAddress(address);
@@ -358,13 +397,13 @@ const submitOrder = async () => {
     return;
   }
 
-  const orderItems = cartItems.value.map(item => ({
+  const orderItems = cartItems.value.map((item) => ({
     productId: item.productId,
     productName: item.productName,
     image: item.image?.replace(/`/g, '').trim() || '',
     price: item.price,
     quantity: item.quantity,
-    customOptions: item.customOptions
+    customOptions: item.customOptions,
   }));
 
   let scheduledDate = null;
@@ -391,7 +430,7 @@ const submitOrder = async () => {
       greetingCardData = {
         templateId: selectedGreetingCard.value.card?._id,
         message: hasMessage || '',
-        recipientName: hasRecipient || ''
+        recipientName: hasRecipient || '',
       };
     }
   }
@@ -402,15 +441,15 @@ const submitOrder = async () => {
     recipient: {
       name: selectedAddress.value.name,
       phone: selectedAddress.value.phone,
-      address: selectedAddress.value.detail
+      address: selectedAddress.value.detail,
     },
     delivery: {
       type: deliveryType.value,
       scheduledDate: scheduledDate,
       scheduledTimeSlot: selectedTimeSlot.value || null,
-      deliveryFee: deliveryFee.value
+      deliveryFee: deliveryFee.value,
     },
-    greetingCard: greetingCardData
+    greetingCard: greetingCardData,
   };
 
   try {
@@ -419,14 +458,14 @@ const submitOrder = async () => {
     await cartStore.clearCart();
     orderStore.resetOrderData();
     router.replace(`/orders/${res.orderId}`);
-  } catch (e) {
-    showToast(e?.message || '订单创建失败，请重试');
+  } catch (_e) {
+    showToast(_e?.message || '订单创建失败，请重试');
   }
 };
 
 onMounted(() => {
   if (addresses.value.length > 0 && !selectedAddress.value) {
-    const defaultAddr = addresses.value.find(a => a.isDefault) || addresses.value[0];
+    const defaultAddr = addresses.value.find((a) => a.isDefault) || addresses.value[0];
     orderStore.setAddress(defaultAddr);
   }
 });

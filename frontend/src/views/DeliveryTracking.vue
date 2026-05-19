@@ -6,22 +6,30 @@
       <div class="order-status">
         <van-icon name="logistics" size="32" color="#1989fa" />
         <div class="status-text">
-          <div class="main-status">{{ currentStatus }}</div>
+          <div class="main-status">
+            {{ currentStatus }}
+          </div>
           <div class="sub-status">预计今天送达</div>
         </div>
       </div>
     </div>
 
-    <van-cell-group inset title="配送员信息" v-if="deliveryPerson">
+    <van-cell-group v-if="deliveryPerson" inset title="配送员信息">
       <van-cell>
         <template #default>
           <div class="delivery-person-info">
-            <van-avatar size="48" color="#1989fa">{{ deliveryPerson.name?.charAt(0) }}</van-avatar>
+            <van-avatar size="48" color="#1989fa">
+              {{ deliveryPerson.name?.charAt(0) }}
+            </van-avatar>
             <div class="person-detail">
-              <div class="person-name">{{ deliveryPerson.name }}</div>
-              <div class="person-phone">{{ deliveryPerson.phone }}</div>
+              <div class="person-name">
+                {{ deliveryPerson.name }}
+              </div>
+              <div class="person-phone">
+                {{ deliveryPerson.phone }}
+              </div>
             </div>
-            <van-button type="primary" size="small" @click="callPerson">联系</van-button>
+            <van-button type="primary" size="small" @click="callPerson"> 联系 </van-button>
           </div>
         </template>
       </van-cell>
@@ -31,8 +39,12 @@
       <van-steps direction="vertical" :active="activeStep" active-color="#1989fa">
         <van-step v-for="(step, index) in steps" :key="index">
           <div class="step-content">
-            <div class="step-title">{{ step.title }}</div>
-            <div class="step-time" v-if="step.time">{{ step.time }}</div>
+            <div class="step-title">
+              {{ step.title }}
+            </div>
+            <div v-if="step.time" class="step-time">
+              {{ step.time }}
+            </div>
           </div>
         </van-step>
       </van-steps>
@@ -43,7 +55,9 @@
       <van-cell title="收货人" :value="recipientInfo" />
       <van-cell title="收货地址">
         <template #value>
-          <div class="address-text">{{ address }}</div>
+          <div class="address-text">
+            {{ address }}
+          </div>
         </template>
       </van-cell>
     </van-cell-group>
@@ -53,7 +67,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { orderApi } from '@/api';
 import { showToast } from 'vant';
 
 const route = useRoute();
@@ -71,11 +84,11 @@ const steps = ref([
   { title: '商品已出库', time: '2024-01-15 15:00' },
   { title: '配送员已接单', time: '2024-01-15 15:10' },
   { title: '商品正在配送中', time: '2024-01-15 15:30' },
-  { title: '已送达', time: '' }
+  { title: '已送达', time: '' },
 ]);
 
 const activeStep = computed(() => {
-  const index = steps.value.findIndex(step => !step.time);
+  const index = steps.value.findIndex((step) => !step.time);
   return index > -1 ? index : steps.value.length;
 });
 

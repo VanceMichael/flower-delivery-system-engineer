@@ -2,27 +2,43 @@
   <div class="promotions-page page-container">
     <van-nav-bar title="节日活动" left-arrow @click-left="goBack" />
 
-    <div class="active-promotions" v-if="activePromotions.length > 0">
+    <div v-if="activePromotions.length > 0" class="active-promotions">
       <div class="section-title">正在进行的活动</div>
-      <div class="promotion-banner" v-for="promo in activePromotions" :key="promo._id" @click="goToPromotion(promo)">
+      <div
+        v-for="promo in activePromotions"
+        :key="promo._id"
+        class="promotion-banner"
+        @click="goToPromotion(promo)"
+      >
         <img :src="promo.bannerImage || defaultBanner" alt="" class="banner-image" />
         <div class="promotion-info">
-          <div class="promotion-name">{{ promo.name }}</div>
+          <div class="promotion-name">
+            {{ promo.name }}
+          </div>
           <div class="promotion-discount">
             <span v-if="promo.discountType === 'percentage'">{{ promo.discountValue }}折优惠</span>
             <span v-else>立减{{ promo.discountValue }}元</span>
           </div>
-          <div class="promotion-time">{{ formatDate(promo.startDate) }} - {{ formatDate(promo.endDate) }}</div>
+          <div class="promotion-time">
+            {{ formatDate(promo.startDate) }} - {{ formatDate(promo.endDate) }}
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="upcoming-promotions" v-if="upcomingPromotions.length > 0">
+    <div v-if="upcomingPromotions.length > 0" class="upcoming-promotions">
       <div class="section-title">即将开始</div>
-      <div class="promotion-card" v-for="promo in upcomingPromotions" :key="promo._id" @click="goToPromotion(promo)">
+      <div
+        v-for="promo in upcomingPromotions"
+        :key="promo._id"
+        class="promotion-card"
+        @click="goToPromotion(promo)"
+      >
         <img :src="promo.bannerImage || defaultBanner" alt="" class="card-image" />
         <div class="card-info">
-          <div class="card-name">{{ promo.name }}</div>
+          <div class="card-name">
+            {{ promo.name }}
+          </div>
           <div class="card-discount">
             <span v-if="promo.discountType === 'percentage'">{{ promo.discountValue }}折</span>
             <span v-else>减{{ promo.discountValue }}元</span>
@@ -32,7 +48,7 @@
       </div>
     </div>
 
-    <van-empty description="暂无活动" v-else />
+    <van-empty v-else description="暂无活动" />
   </div>
 </template>
 
@@ -46,7 +62,8 @@ const router = useRouter();
 const activePromotions = ref([]);
 const upcomingPromotions = ref([]);
 
-const defaultBanner = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20promotion%20banner&image_size=landscape_16_9';
+const defaultBanner =
+  'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=flower%20promotion%20banner&image_size=landscape_16_9';
 
 const fetchPromotions = async () => {
   try {
@@ -54,7 +71,7 @@ const fetchPromotions = async () => {
     const upcomingRes = await promotionApi.getUpcoming();
     activePromotions.value = activeRes || [];
     upcomingPromotions.value = upcomingRes || [];
-  } catch (e) {
+  } catch (_e) {
     activePromotions.value = [
       {
         _id: '1',
@@ -63,7 +80,8 @@ const fetchPromotions = async () => {
         discountValue: 80,
         startDate: '2024-02-10',
         endDate: '2024-02-14',
-        bannerImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=valentines%20day%20flower%20promotion%20banner&image_size=landscape_16_9'
+        bannerImage:
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=valentines%20day%20flower%20promotion%20banner&image_size=landscape_16_9',
       },
       {
         _id: '2',
@@ -72,14 +90,17 @@ const fetchPromotions = async () => {
         discountValue: 30,
         startDate: '2024-05-08',
         endDate: '2024-05-12',
-        bannerImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=mothers%20day%20flower%20promotion%20banner&image_size=landscape_16_9'
-      }
+        bannerImage:
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=mothers%20day%20flower%20promotion%20banner&image_size=landscape_16_9',
+      },
     ];
   }
 };
 
 const formatDate = (date) => {
-  if (!date) return '';
+  if (!date) {
+    return '';
+  }
   const d = new Date(date);
   return `${d.getMonth() + 1}月${d.getDate()}日`;
 };

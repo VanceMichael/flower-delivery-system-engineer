@@ -2,73 +2,100 @@
   <div class="cart-page page-container">
     <van-nav-bar title="购物车" />
 
-    <van-tabs v-model="activeTab" v-if="!isEdit">
+    <van-tabs v-if="!isEdit" v-model="activeTab">
       <van-tab title="全部" />
     </van-tabs>
 
-    <div class="cart-empty" v-if="cartItems.length === 0">
+    <div v-if="cartItems.length === 0" class="cart-empty">
       <van-empty description="购物车是空的" />
-      <van-button type="primary" @click="goShopping">去逛逛</van-button>
+      <van-button type="primary" @click="goShopping"> 去逛逛 </van-button>
     </div>
 
-    <div class="cart-list" v-else>
-      <div class="cart-item" v-for="item in cartItems" :key="item.cartId">
-        <van-checkbox v-model="item.selected" v-if="isEdit" />
-        <img :src="item.image || defaultImage" alt="" class="item-image" @click="goToProduct(item)" />
+    <div v-else class="cart-list">
+      <div v-for="item in cartItems" :key="item.cartId" class="cart-item">
+        <van-checkbox v-if="isEdit" v-model="item.selected" />
+        <img
+          :src="item.image || defaultImage"
+          alt=""
+          class="item-image"
+          @click="goToProduct(item)"
+        />
         <div class="item-info">
-          <div class="item-name" @click="goToProduct(item)">{{ item.productName }}</div>
-          <div class="item-custom" v-if="item.customOptions">
-            <van-tag size="mini" type="warning">已定制</van-tag>
+          <div class="item-name" @click="goToProduct(item)">
+            {{ item.productName }}
+          </div>
+          <div v-if="item.customOptions" class="item-custom">
+            <van-tag size="mini" type="warning"> 已定制 </van-tag>
           </div>
           <div class="item-price-row">
             <span class="item-price">¥{{ item.price }}</span>
-            <van-stepper v-model="item.quantity" :min="1" @change="(value) => updateQuantity(item, value)" />
+            <van-stepper
+              v-model="item.quantity"
+              :min="1"
+              @change="(value) => updateQuantity(item, value)"
+            />
           </div>
         </div>
-        <van-icon name="delete" class="delete-icon" v-if="isEdit" @click="removeItem(item)" />
+        <van-icon v-if="isEdit" name="delete" class="delete-icon" @click="removeItem(item)" />
       </div>
     </div>
 
-    <div class="bottom-bar" v-if="cartItems.length > 0">
+    <div v-if="cartItems.length > 0" class="bottom-bar">
       <div class="bar-left">
-        <van-checkbox v-model="selectAll" v-if="isEdit">全选</van-checkbox>
-        <van-button type="default" size="small" @click="toggleEdit">{{ isEdit ? '完成' : '编辑' }}</van-button>
+        <van-checkbox v-if="isEdit" v-model="selectAll"> 全选 </van-checkbox>
+        <van-button type="default" size="small" @click="toggleEdit">
+          {{ isEdit ? '完成' : '编辑' }}
+        </van-button>
       </div>
       <div class="bar-right">
-        <div class="total-section" v-if="!isEdit">
+        <div v-if="!isEdit" class="total-section">
           <span class="total-label">合计:</span>
           <span class="total-price">¥{{ cartTotal.toFixed(2) }}</span>
         </div>
-        <van-button type="danger" v-if="isEdit" @click="deleteSelected">删除</van-button>
-        <van-button type="primary" v-else :disabled="cartItems.length === 0" @click="goToCheckout">结算({{ cartCount }})</van-button>
+        <van-button v-if="isEdit" type="danger" @click="deleteSelected"> 删除 </van-button>
+        <van-button v-else type="primary" :disabled="cartItems.length === 0" @click="goToCheckout">
+          结算({{ cartCount }})
+        </van-button>
       </div>
     </div>
 
     <van-tabbar v-model="activeTabBar" route active-color="#1989fa">
       <van-tabbar-item name="home" to="/home">
         <template #icon="props">
-          <van-icon :name="props.active ? 'wap-home' : 'home-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'wap-home' : 'home-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         首页
       </van-tabbar-item>
       <van-tabbar-item name="products" to="/products">
         <template #icon="props">
-          <van-icon :name="props.active ? 'shopping-cart' : 'shopping-cart-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'shopping-cart' : 'shopping-cart-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         商品
       </van-tabbar-item>
       <van-tabbar-item name="cart" to="/cart">
         <template #icon="props">
-          <van-icon :name="props.active ? 'cart' : 'cart-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'cart' : 'cart-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         <template #badge>
-          <van-badge :content="cartCount" v-if="cartCount > 0" />
+          <van-badge v-if="cartCount > 0" :content="cartCount" />
         </template>
         购物车
       </van-tabbar-item>
       <van-tabbar-item name="profile" to="/profile">
         <template #icon="props">
-          <van-icon :name="props.active ? 'user' : 'user-o'" :color="props.active ? '#1989fa' : ''" />
+          <van-icon
+            :name="props.active ? 'user' : 'user-o'"
+            :color="props.active ? '#1989fa' : ''"
+          />
         </template>
         我的
       </van-tabbar-item>
@@ -98,7 +125,7 @@ const cartTotal = computed(() => cartStore.cartTotal);
 const defaultImage = 'https://picsum.photos/200/200?random=50';
 
 watch(selectAll, (newVal) => {
-  cartItems.value.forEach(item => {
+  cartItems.value.forEach((item) => {
     item.selected = newVal;
   });
 });
@@ -107,7 +134,7 @@ const toggleEdit = () => {
   isEdit.value = !isEdit.value;
   if (!isEdit.value) {
     selectAll.value = false;
-    cartItems.value.forEach(item => {
+    cartItems.value.forEach((item) => {
       item.selected = false;
     });
   }
@@ -122,28 +149,32 @@ const updateQuantity = async (item, value) => {
 const removeItem = (item) => {
   showConfirmDialog({
     title: '提示',
-    message: '确定要删除该商品吗？'
-  }).then(async () => {
-    await cartStore.removeFromCart(item.cartId);
-  }).catch(() => {});
+    message: '确定要删除该商品吗？',
+  })
+    .then(async () => {
+      await cartStore.removeFromCart(item.cartId);
+    })
+    .catch(() => {});
 };
 
 const deleteSelected = async () => {
-  const selectedItems = cartItems.value.filter(item => item.selected);
+  const selectedItems = cartItems.value.filter((item) => item.selected);
   if (selectedItems.length === 0) {
     showToast('请选择要删除的商品');
     return;
   }
   showConfirmDialog({
     title: '提示',
-    message: `确定要删除选中的 ${selectedItems.length} 件商品吗？`
-  }).then(async () => {
-    for (const item of selectedItems) {
-      await cartStore.removeFromCart(item.cartId);
-    }
-    showToast('删除成功');
-    isEdit.value = false;
-  }).catch(() => {});
+    message: `确定要删除选中的 ${selectedItems.length} 件商品吗？`,
+  })
+    .then(async () => {
+      for (const item of selectedItems) {
+        await cartStore.removeFromCart(item.cartId);
+      }
+      showToast('删除成功');
+      isEdit.value = false;
+    })
+    .catch(() => {});
 };
 
 const goShopping = () => {

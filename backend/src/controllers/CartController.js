@@ -6,13 +6,13 @@ class CartController {
   async getCart(req, res) {
     try {
       const userId = req.user?._id || req.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ success: false, message: '请先登录' });
       }
 
       let cart = await Cart.findOne({ userId });
-      
+
       if (!cart) {
         cart = new Cart({ userId, items: [] });
         await cart.save();
@@ -26,7 +26,7 @@ class CartController {
         price: item.price,
         quantity: item.quantity,
         customOptions: item.customOptions ? Object.fromEntries(item.customOptions) : null,
-        selected: true
+        selected: true,
       }));
 
       res.json({
@@ -34,8 +34,8 @@ class CartController {
         data: {
           items: itemsWithCartId,
           cartCount: itemsWithCartId.reduce((sum, item) => sum + item.quantity, 0),
-          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0)
-        }
+          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        },
       });
     } catch (error) {
       console.error('获取购物车失败:', error);
@@ -46,7 +46,7 @@ class CartController {
   async addToCart(req, res) {
     try {
       const userId = req.user?._id || req.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ success: false, message: '请先登录' });
       }
@@ -67,15 +67,17 @@ class CartController {
       }
 
       let cart = await Cart.findOne({ userId });
-      
+
       if (!cart) {
         cart = new Cart({ userId, items: [] });
       }
 
       const customOptionsStr = JSON.stringify(customOptions || {});
       const existingIndex = cart.items.findIndex(
-        item => item.productId.toString() === productId.toString() && 
-                JSON.stringify(item.customOptions ? Object.fromEntries(item.customOptions) : {}) === customOptionsStr
+        (item) =>
+          item.productId.toString() === productId.toString() &&
+          JSON.stringify(item.customOptions ? Object.fromEntries(item.customOptions) : {}) ===
+            customOptionsStr,
       );
 
       if (existingIndex > -1) {
@@ -88,7 +90,7 @@ class CartController {
           image: product.images?.[0] || '',
           price: product.price,
           quantity,
-          customOptions: customOptions ? new Map(Object.entries(customOptions)) : undefined
+          customOptions: customOptions ? new Map(Object.entries(customOptions)) : undefined,
         };
         cart.items.push(itemData);
       }
@@ -102,7 +104,7 @@ class CartController {
         image: item.image,
         price: item.price,
         quantity: item.quantity,
-        customOptions: item.customOptions ? Object.fromEntries(item.customOptions) : null
+        customOptions: item.customOptions ? Object.fromEntries(item.customOptions) : null,
       }));
 
       res.json({
@@ -111,8 +113,8 @@ class CartController {
         data: {
           items: itemsWithCartId,
           cartCount: itemsWithCartId.reduce((sum, item) => sum + item.quantity, 0),
-          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0)
-        }
+          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        },
       });
     } catch (error) {
       console.error('添加到购物车失败:', error);
@@ -123,7 +125,7 @@ class CartController {
   async updateQuantity(req, res) {
     try {
       const userId = req.user?._id || req.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ success: false, message: '请先登录' });
       }
@@ -140,12 +142,12 @@ class CartController {
       }
 
       let existingIndex = cart.items.findIndex(
-        item => item._id && item._id.toString() === cartId.toString()
+        (item) => item._id && item._id.toString() === cartId.toString(),
       );
 
       if (existingIndex === -1) {
         existingIndex = cart.items.findIndex(
-          item => item.productId && item.productId.toString() === cartId.toString()
+          (item) => item.productId && item.productId.toString() === cartId.toString(),
         );
       }
 
@@ -155,17 +157,20 @@ class CartController {
           const parts = cartIdStr.split('-');
           const productIdPart = parts[parts.length - 1];
           existingIndex = cart.items.findIndex(
-            item => item.productId && item.productId.toString().includes(productIdPart)
+            (item) => item.productId && item.productId.toString().includes(productIdPart),
           );
         }
       }
 
       if (existingIndex === -1) {
         console.log('updateQuantity: Cart ID not found:', cartId);
-        console.log('Cart items:', cart.items.map(item => ({
-          _id: item._id,
-          productId: item.productId
-        })));
+        console.log(
+          'Cart items:',
+          cart.items.map((item) => ({
+            _id: item._id,
+            productId: item.productId,
+          })),
+        );
         return res.status(404).json({ success: false, message: '购物车商品不存在' });
       }
 
@@ -183,13 +188,17 @@ class CartController {
       await cart.save();
 
       const itemsWithCartId = cart.items.map((item, index) => ({
-        cartId: item._id ? item._id.toString() : (item.productId ? item.productId.toString() + '-' + index : index.toString()),
+        cartId: item._id
+          ? item._id.toString()
+          : item.productId
+            ? item.productId.toString() + '-' + index
+            : index.toString(),
         productId: item.productId,
         productName: item.productName,
         image: item.image,
         price: item.price,
         quantity: item.quantity,
-        customOptions: item.customOptions ? Object.fromEntries(item.customOptions) : null
+        customOptions: item.customOptions ? Object.fromEntries(item.customOptions) : null,
       }));
 
       res.json({
@@ -198,8 +207,8 @@ class CartController {
         data: {
           items: itemsWithCartId,
           cartCount: itemsWithCartId.reduce((sum, item) => sum + item.quantity, 0),
-          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0)
-        }
+          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        },
       });
     } catch (error) {
       console.error('更新购物车数量失败:', error);
@@ -210,7 +219,7 @@ class CartController {
   async removeFromCart(req, res) {
     try {
       const userId = req.user?._id || req.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ success: false, message: '请先登录' });
       }
@@ -227,12 +236,12 @@ class CartController {
       }
 
       let existingIndex = cart.items.findIndex(
-        item => item._id && item._id.toString() === cartId.toString()
+        (item) => item._id && item._id.toString() === cartId.toString(),
       );
 
       if (existingIndex === -1) {
         existingIndex = cart.items.findIndex(
-          item => item.productId && item.productId.toString() === cartId.toString()
+          (item) => item.productId && item.productId.toString() === cartId.toString(),
         );
       }
 
@@ -242,17 +251,20 @@ class CartController {
           const parts = cartIdStr.split('-');
           const productIdPart = parts[parts.length - 1];
           existingIndex = cart.items.findIndex(
-            item => item.productId && item.productId.toString().includes(productIdPart)
+            (item) => item.productId && item.productId.toString().includes(productIdPart),
           );
         }
       }
 
       if (existingIndex === -1) {
         console.log('removeFromCart: Cart ID not found:', cartId);
-        console.log('Cart items:', cart.items.map(item => ({
-          _id: item._id,
-          productId: item.productId
-        })));
+        console.log(
+          'Cart items:',
+          cart.items.map((item) => ({
+            _id: item._id,
+            productId: item.productId,
+          })),
+        );
         return res.status(404).json({ success: false, message: '购物车商品不存在' });
       }
 
@@ -260,13 +272,17 @@ class CartController {
       await cart.save();
 
       const itemsWithCartId = cart.items.map((item, index) => ({
-        cartId: item._id ? item._id.toString() : (item.productId ? item.productId.toString() + '-' + index : index.toString()),
+        cartId: item._id
+          ? item._id.toString()
+          : item.productId
+            ? item.productId.toString() + '-' + index
+            : index.toString(),
         productId: item.productId,
         productName: item.productName,
         image: item.image,
         price: item.price,
         quantity: item.quantity,
-        customOptions: item.customOptions ? Object.fromEntries(item.customOptions) : null
+        customOptions: item.customOptions ? Object.fromEntries(item.customOptions) : null,
       }));
 
       res.json({
@@ -275,8 +291,8 @@ class CartController {
         data: {
           items: itemsWithCartId,
           cartCount: itemsWithCartId.reduce((sum, item) => sum + item.quantity, 0),
-          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0)
-        }
+          cartTotal: itemsWithCartId.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        },
       });
     } catch (error) {
       console.error('移除购物车商品失败:', error);
@@ -287,13 +303,13 @@ class CartController {
   async clearCart(req, res) {
     try {
       const userId = req.user?._id || req.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ success: false, message: '请先登录' });
       }
 
       let cart = await Cart.findOne({ userId });
-      
+
       if (!cart) {
         cart = new Cart({ userId, items: [] });
       } else {
@@ -308,8 +324,8 @@ class CartController {
         data: {
           items: [],
           cartCount: 0,
-          cartTotal: 0
-        }
+          cartTotal: 0,
+        },
       });
     } catch (error) {
       console.error('清空购物车失败:', error);
