@@ -4,21 +4,27 @@ class ProductController {
   async getAllProducts(req, res) {
     try {
       const { type, category, status, keyword, page = 1, limit = 20, sort = 'default' } = req.query;
-      
+
       const query = {};
-      if (type) query.type = type;
-      if (category) query.category = category;
-      if (status) query.status = status;
+      if (type) {
+        query.type = type;
+      }
+      if (category) {
+        query.category = category;
+      }
+      if (status) {
+        query.status = status;
+      }
       if (keyword) {
         query.$or = [
           { name: { $regex: keyword, $options: 'i' } },
           { description: { $regex: keyword, $options: 'i' } },
-          { tags: { $in: [new RegExp(keyword, 'i')] } }
+          { tags: { $in: [new RegExp(keyword, 'i')] } },
         ];
       }
 
       let sortOption = { sortOrder: 1, salesCount: -1, createdAt: -1 };
-      
+
       if (sort === 'sales') {
         sortOption = { salesCount: -1, createdAt: -1 };
       } else if (sort === 'price-asc') {
@@ -30,7 +36,7 @@ class ProductController {
       const options = {
         page: parseInt(page),
         limit: parseInt(limit),
-        sort: sortOption
+        sort: sortOption,
       };
 
       const total = await Product.countDocuments(query);
@@ -47,9 +53,9 @@ class ProductController {
             page: options.page,
             limit: options.limit,
             total,
-            pages: Math.ceil(total / options.limit)
-          }
-        }
+            pages: Math.ceil(total / options.limit),
+          },
+        },
       });
     } catch (error) {
       console.error('获取商品列表失败:', error);
@@ -87,7 +93,7 @@ class ProductController {
         tags,
         materials,
         customConfig,
-        sortOrder
+        sortOrder,
       } = req.body;
 
       const product = new Product({
@@ -103,7 +109,7 @@ class ProductController {
         materials,
         customConfig,
         sortOrder,
-        status: stock > 0 ? 'active' : 'out_of_stock'
+        status: stock > 0 ? 'active' : 'out_of_stock',
       });
 
       await product.save();
@@ -111,12 +117,14 @@ class ProductController {
       res.status(201).json({
         success: true,
         message: '商品创建成功',
-        data: product
+        data: product,
       });
     } catch (error) {
       console.error('创建商品失败:', error);
       if (error.name === 'ValidationError') {
-        return res.status(400).json({ success: false, message: '数据验证失败', errors: error.errors });
+        return res
+          .status(400)
+          .json({ success: false, message: '数据验证失败', errors: error.errors });
       }
       res.status(500).json({ success: false, message: '创建商品失败' });
     }
@@ -134,7 +142,7 @@ class ProductController {
       const product = await Product.findByIdAndUpdate(
         id,
         { $set: updateData },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!product) {
@@ -144,12 +152,14 @@ class ProductController {
       res.json({
         success: true,
         message: '商品更新成功',
-        data: product
+        data: product,
       });
     } catch (error) {
       console.error('更新商品失败:', error);
       if (error.name === 'ValidationError') {
-        return res.status(400).json({ success: false, message: '数据验证失败', errors: error.errors });
+        return res
+          .status(400)
+          .json({ success: false, message: '数据验证失败', errors: error.errors });
       }
       res.status(500).json({ success: false, message: '更新商品失败' });
     }
@@ -191,9 +201,9 @@ class ProductController {
             page: parseInt(page),
             limit: parseInt(limit),
             total,
-            pages: Math.ceil(total / limit)
-          }
-        }
+            pages: Math.ceil(total / limit),
+          },
+        },
       });
     } catch (error) {
       console.error('按类型获取商品失败:', error);

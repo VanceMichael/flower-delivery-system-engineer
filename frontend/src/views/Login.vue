@@ -78,7 +78,7 @@ const loading = ref(false);
 
 const loginForm = reactive({
   username: '',
-  password: ''
+  password: '',
 });
 
 const goBack = () => {
@@ -105,13 +105,13 @@ const onSubmit = async () => {
   try {
     const result = await authApi.login({
       username: loginForm.username,
-      password: loginForm.password
+      password: loginForm.password,
     });
 
     if (result?.token && result?.user) {
       userStore.setUser(result.user, result.token);
       showToast('登录成功');
-      
+
       const redirect = route.query.redirect || '/home';
       router.replace(redirect);
     }

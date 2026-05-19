@@ -5,8 +5,8 @@ const api = axios.create({
   baseURL: '/api',
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 api.interceptors.request.use(
@@ -19,7 +19,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 api.interceptors.response.use(
@@ -36,7 +36,7 @@ api.interceptors.response.use(
     const message = error.response?.data?.message || error.message || '网络错误';
     showToast(message);
     return Promise.reject(error);
-  }
+  },
 );
 
 export const productApi = {
@@ -46,7 +46,7 @@ export const productApi = {
   getHot: (params) => api.get('/products/hot', { params }),
   create: (data) => api.post('/products', data),
   update: (id, data) => api.put(`/products/${id}`, data),
-  delete: (id) => api.delete(`/products/${id}`)
+  delete: (id) => api.delete(`/products/${id}`),
 };
 
 export const orderApi = {
@@ -56,7 +56,7 @@ export const orderApi = {
   create: (data) => api.post('/orders', data),
   updateStatus: (id, data) => api.put(`/orders/${id}/status`, data),
   pay: (id, data) => api.post(`/orders/${id}/pay`, data),
-  getStatistics: (params) => api.get('/orders/statistics', { params })
+  getStatistics: (params) => api.get('/orders/statistics', { params }),
 };
 
 export const deliveryApi = {
@@ -68,7 +68,7 @@ export const deliveryApi = {
   assign: (data) => api.post('/delivery/assign', data),
   batchAssign: (data) => api.post('/delivery/batch-assign', data),
   confirm: (data) => api.post('/delivery/confirm', data),
-  optimizeRoute: (data) => api.post('/delivery/optimize-route', data)
+  optimizeRoute: (data) => api.post('/delivery/optimize-route', data),
 };
 
 export const greetingCardApi = {
@@ -79,7 +79,7 @@ export const greetingCardApi = {
   getPremium: (params) => api.get('/greeting-cards/premium', { params }),
   create: (data) => api.post('/greeting-cards', data),
   update: (id, data) => api.put(`/greeting-cards/${id}`, data),
-  delete: (id) => api.delete(`/greeting-cards/${id}`)
+  delete: (id) => api.delete(`/greeting-cards/${id}`),
 };
 
 export const promotionApi = {
@@ -92,7 +92,7 @@ export const promotionApi = {
   update: (id, data) => api.put(`/holiday-promotions/${id}`, data),
   delete: (id) => api.delete(`/holiday-promotions/${id}`),
   publish: (id) => api.post(`/holiday-promotions/${id}/publish`),
-  cancel: (id) => api.post(`/holiday-promotions/${id}/cancel`)
+  cancel: (id) => api.post(`/holiday-promotions/${id}/cancel`),
 };
 
 export const authApi = {
@@ -100,7 +100,7 @@ export const authApi = {
   register: (data) => api.post('/auth/register', data),
   getCurrentUser: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data),
-  changePassword: (data) => api.put('/auth/change-password', data)
+  changePassword: (data) => api.put('/auth/change-password', data),
 };
 
 export const cartApi = {
@@ -108,7 +108,7 @@ export const cartApi = {
   addToCart: (data) => api.post('/carts/add', data),
   updateQuantity: (data) => api.put('/carts/quantity', data),
   removeFromCart: (cartId) => api.delete(`/carts/${cartId}`),
-  clearCart: () => api.post('/carts/clear')
+  clearCart: () => api.post('/carts/clear'),
 };
 
 export default api;

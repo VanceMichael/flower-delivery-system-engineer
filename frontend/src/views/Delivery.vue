@@ -16,7 +16,7 @@ const pageTitles = {
   'Delivery.vue': '配送管理',
   'GreetingCardDetail.vue': '贺卡详情',
   'PromotionDetail.vue': '活动详情',
-  'DeliverySchedule.vue': '预约配送'
+  'DeliverySchedule.vue': '预约配送',
 };
 
 const pageTitle = computed(() => {

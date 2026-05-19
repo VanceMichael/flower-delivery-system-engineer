@@ -27,7 +27,7 @@
           placeholder="请输入邮箱地址"
           :rules="[
             { required: true, message: '请输入邮箱' },
-            { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: '邮箱格式不正确' }
+            { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: '邮箱格式不正确' },
           ]"
         />
 
@@ -38,7 +38,7 @@
           placeholder="请输入手机号"
           :rules="[
             { required: true, message: '请输入手机号' },
-            { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确' }
+            { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确' },
           ]"
         />
 
@@ -50,7 +50,7 @@
           placeholder="请输入密码（至少6位）"
           :rules="[
             { required: true, message: '请输入密码' },
-            { min: 6, message: '密码至少6位' }
+            { min: 6, message: '密码至少6位' },
           ]"
         />
 
@@ -93,7 +93,7 @@ const formData = reactive({
   email: '',
   phone: '',
   password: '',
-  confirmPassword: ''
+  confirmPassword: '',
 });
 
 const goBack = () => {
@@ -121,7 +121,7 @@ const onRegister = async () => {
       username: formData.username,
       email: formData.email,
       phone: formData.phone,
-      password: formData.password
+      password: formData.password,
     });
 
     if (result?.token && result?.user) {

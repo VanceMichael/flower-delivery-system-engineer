@@ -1,6 +1,12 @@
 <template>
   <div class="address-page">
-    <van-nav-bar title="收货地址" left-arrow @click-left="goBack" right-text="新增" @click-right="showAddPopup = true" />
+    <van-nav-bar
+      title="收货地址"
+      left-arrow
+      @click-left="goBack"
+      right-text="新增"
+      @click-right="showAddPopup = true"
+    />
 
     <van-cell-group v-if="addresses.length > 0">
       <div class="address-item" v-for="address in addresses" :key="address.id">
@@ -18,7 +24,10 @@
         </van-cell>
         <div class="address-actions">
           <div class="action-item" @click="setDefault(address)">
-            <van-icon :name="address.isDefault ? 'success' : 'circle'" :color="address.isDefault ? '#1989fa' : '#999'" />
+            <van-icon
+              :name="address.isDefault ? 'success' : 'circle'"
+              :color="address.isDefault ? '#1989fa' : '#999'"
+            />
             <span>默认</span>
           </div>
           <div class="action-item" @click="editAddress(address)">
@@ -35,13 +44,30 @@
 
     <van-empty description="暂无收货地址" v-else />
 
-    <van-popup v-model:show="showAddPopup" round position="bottom" class="address-popup" style="height: 80%">
+    <van-popup
+      v-model:show="showAddPopup"
+      round
+      position="bottom"
+      class="address-popup"
+      style="height: 80%"
+    >
       <template #title>{{ editingAddress ? '编辑地址' : '新增地址' }}</template>
       <div class="address-form">
         <van-cell-group inset>
           <van-field v-model="formData.name" label="收货人" placeholder="请输入收货人姓名" />
-          <van-field v-model="formData.phone" label="手机号" placeholder="请输入手机号" type="tel" />
-          <van-field v-model="formData.detail" label="详细地址" placeholder="请输入详细地址" type="textarea" :rows="2" />
+          <van-field
+            v-model="formData.phone"
+            label="手机号"
+            placeholder="请输入手机号"
+            type="tel"
+          />
+          <van-field
+            v-model="formData.detail"
+            label="详细地址"
+            placeholder="请输入详细地址"
+            type="textarea"
+            :rows="2"
+          />
         </van-cell-group>
         <van-cell-group inset class="default-switch">
           <van-cell title="设为默认地址">
@@ -76,7 +102,7 @@ const formData = ref({
   name: '',
   phone: '',
   detail: '',
-  isDefault: false
+  isDefault: false,
 });
 
 const resetForm = () => {
@@ -84,7 +110,7 @@ const resetForm = () => {
     name: '',
     phone: '',
     detail: '',
-    isDefault: false
+    isDefault: false,
   };
   editingAddress.value = null;
 };
@@ -106,11 +132,13 @@ const editAddress = (address) => {
 const deleteAddress = (address) => {
   showConfirmDialog({
     title: '提示',
-    message: '确定要删除该地址吗？'
-  }).then(() => {
-    userStore.deleteAddress(address.id);
-    showSuccessToast('删除成功');
-  }).catch(() => {});
+    message: '确定要删除该地址吗？',
+  })
+    .then(() => {
+      userStore.deleteAddress(address.id);
+      showSuccessToast('删除成功');
+    })
+    .catch(() => {});
 };
 
 const submitAddress = () => {
@@ -145,7 +173,7 @@ onMounted(() => {
     return;
   }
   if (userStore.userInfo?.addresses?.length > 0 && addresses.value.length === 0) {
-    userStore.userInfo.addresses.forEach(addr => {
+    userStore.userInfo.addresses.forEach((addr) => {
       userStore.addAddress(addr);
     });
   }

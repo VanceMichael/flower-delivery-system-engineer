@@ -6,7 +6,7 @@ services:
     container_name: flower-delivery-mongodb
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongo_data:/data/db
     networks:
@@ -21,7 +21,7 @@ services:
     container_name: flower-delivery-backend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - PORT=3000
       - MONGODB_URI=mongodb://mongodb:27017/flower-delivery
@@ -41,7 +41,7 @@ services:
     container_name: flower-delivery-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
       - backend
     networks:
