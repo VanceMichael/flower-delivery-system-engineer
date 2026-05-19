@@ -9,10 +9,12 @@ export const useCartStore = defineStore('cart', () => {
   const isLoading = ref(false);
 
   const normalizeCartItems = (rawItems) => {
-    if (!rawItems || !Array.isArray(rawItems)) return [];
-    return rawItems.map(item => ({
+    if (!rawItems || !Array.isArray(rawItems)) {
+      return [];
+    }
+    return rawItems.map((item) => ({
       ...item,
-      quantity: Number(item.quantity) || 1
+      quantity: Number(item.quantity) || 1,
     }));
   };
 
@@ -37,8 +39,8 @@ export const useCartStore = defineStore('cart', () => {
       isLoading.value = true;
       const res = await cartApi.getCart();
       items.value = normalizeCartItems(res?.items);
-    } catch (e) {
-      console.error('获取购物车失败:', e);
+    } catch (_e) {
+      console.error('获取购物车失败:', _e);
     } finally {
       isLoading.value = false;
     }
@@ -49,28 +51,30 @@ export const useCartStore = defineStore('cart', () => {
       const res = await cartApi.addToCart({
         productId: product._id,
         quantity,
-        customOptions
+        customOptions,
       });
       items.value = normalizeCartItems(res?.items);
       showToast('已添加到购物车');
       return true;
-    } catch (e) {
-      console.error('添加到购物车失败:', e);
+    } catch (_e) {
+      console.error('添加到购物车失败:', _e);
       return false;
     }
   };
 
-  const setQuickBuyItems = (product, quantity = 1, customOptions = null, greetingCard = null) => {
-    quickBuyItems.value = [{
-      cartId: 'quick-buy-' + Date.now(),
-      productId: product._id,
-      productName: product.name,
-      image: product.images?.[0] || '',
-      price: product.price,
-      quantity,
-      customOptions: customOptions || null,
-      selected: true
-    }];
+  const setQuickBuyItems = (product, quantity = 1, customOptions = null, _greetingCard = null) => {
+    quickBuyItems.value = [
+      {
+        cartId: 'quick-buy-' + Date.now(),
+        productId: product._id,
+        productName: product.name,
+        image: product.images?.[0] || '',
+        price: product.price,
+        quantity,
+        customOptions: customOptions || null,
+        selected: true,
+      },
+    ];
   };
 
   const clearQuickBuyItems = () => {
@@ -83,8 +87,8 @@ export const useCartStore = defineStore('cart', () => {
       items.value = normalizeCartItems(res?.items);
       showToast('已从购物车移除');
       return true;
-    } catch (e) {
-      console.error('移除购物车商品失败:', e);
+    } catch (_e) {
+      console.error('移除购物车商品失败:', _e);
       return false;
     }
   };
@@ -93,12 +97,12 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const res = await cartApi.updateQuantity({
         cartId,
-        quantity
+        quantity,
       });
       items.value = normalizeCartItems(res?.items);
       return true;
-    } catch (e) {
-      console.error('更新购物车数量失败:', e);
+    } catch (_e) {
+      console.error('更新购物车数量失败:', _e);
       return false;
     }
   };
@@ -109,8 +113,8 @@ export const useCartStore = defineStore('cart', () => {
       items.value = normalizeCartItems(res?.items);
       quickBuyItems.value = [];
       return true;
-    } catch (e) {
-      console.error('清空购物车失败:', e);
+    } catch (_e) {
+      console.error('清空购物车失败:', _e);
       return false;
     }
   };
@@ -129,7 +133,7 @@ export const useCartStore = defineStore('cart', () => {
     clearQuickBuyItems,
     removeFromCart,
     updateQuantity,
-    clearCart
+    clearCart,
   };
 });
 
@@ -179,7 +183,7 @@ export const useOrderStore = defineStore('order', () => {
     setAddress,
     setGreetingCard,
     setPromotion,
-    resetOrderData
+    resetOrderData,
   };
 });
 
@@ -206,17 +210,17 @@ export const useUserStore = defineStore('user', () => {
 
   const addAddress = (address) => {
     if (address.isDefault) {
-      addresses.value.forEach(addr => addr.isDefault = false);
+      addresses.value.forEach((addr) => (addr.isDefault = false));
     }
     addresses.value.push({ ...address, id: Date.now().toString() });
     saveAddresses();
   };
 
   const updateAddress = (addressId, updates) => {
-    const index = addresses.value.findIndex(a => a.id === addressId);
+    const index = addresses.value.findIndex((a) => a.id === addressId);
     if (index > -1) {
       if (updates.isDefault) {
-        addresses.value.forEach(addr => addr.isDefault = false);
+        addresses.value.forEach((addr) => (addr.isDefault = false));
       }
       addresses.value[index] = { ...addresses.value[index], ...updates };
       saveAddresses();
@@ -224,7 +228,7 @@ export const useUserStore = defineStore('user', () => {
   };
 
   const deleteAddress = (addressId) => {
-    const index = addresses.value.findIndex(a => a.id === addressId);
+    const index = addresses.value.findIndex((a) => a.id === addressId);
     if (index > -1) {
       addresses.value.splice(index, 1);
       saveAddresses();
@@ -244,6 +248,6 @@ export const useUserStore = defineStore('user', () => {
     logout,
     addAddress,
     updateAddress,
-    deleteAddress
+    deleteAddress,
   };
 });

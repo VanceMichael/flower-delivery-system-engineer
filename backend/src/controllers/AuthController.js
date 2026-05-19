@@ -4,13 +4,13 @@ const { validationResult } = require('express-validator');
 
 const generateToken = (user) => {
   return jwt.sign(
-    { 
-      id: user._id, 
-      username: user.username, 
-      role: user.role 
+    {
+      id: user._id,
+      username: user.username,
+      role: user.role,
     },
     process.env.JWT_SECRET || 'flower-delivery-secret-key',
-    { expiresIn: '7d' }
+    { expiresIn: '7d' },
   );
 };
 
@@ -18,23 +18,23 @@ const register = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ 
-        success: false, 
-        message: '数据验证失败', 
-        errors: errors.array() 
+      return res.status(400).json({
+        success: false,
+        message: '数据验证失败',
+        errors: errors.array(),
       });
     }
 
     const { username, email, password, phone } = req.body;
 
     const existingUser = await User.findOne({
-      $or: [{ username }, { email }]
+      $or: [{ username }, { email }],
     });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: existingUser.username === username ? '用户名已存在' : '邮箱已被注册'
+        message: existingUser.username === username ? '用户名已存在' : '邮箱已被注册',
       });
     }
 
@@ -43,7 +43,7 @@ const register = async (req, res) => {
       email,
       password,
       phone,
-      role: 'customer'
+      role: 'customer',
     });
 
     await user.save();
@@ -60,9 +60,9 @@ const register = async (req, res) => {
           username: user.username,
           email: user.email,
           phone: user.phone,
-          role: user.role
-        }
-      }
+          role: user.role,
+        },
+      },
     });
   } catch (error) {
     console.error('注册失败:', error);
@@ -77,21 +77,21 @@ const login = async (req, res) => {
     if (!username || !password) {
       return res.status(400).json({
         success: false,
-        message: '请输入用户名和密码'
+        message: '请输入用户名和密码',
       });
     }
 
     console.log('登录尝试:', username);
 
-    const user = await User.findOne({ 
-      $or: [{ username }, { email: username }] 
+    const user = await User.findOne({
+      $or: [{ username }, { email: username }],
     });
 
     if (!user) {
       console.log('用户不存在:', username);
       return res.status(400).json({
         success: false,
-        message: '用户名或密码错误'
+        message: '用户名或密码错误',
       });
     }
 
@@ -101,17 +101,17 @@ const login = async (req, res) => {
     if (!user.isActive) {
       return res.status(400).json({
         success: false,
-        message: '账号已被禁用'
+        message: '账号已被禁用',
       });
     }
 
     const isPasswordValid = await user.comparePassword(password);
     console.log('密码验证结果:', isPasswordValid);
-    
+
     if (!isPasswordValid) {
       return res.status(400).json({
         success: false,
-        message: '用户名或密码错误'
+        message: '用户名或密码错误',
       });
     }
 
@@ -128,9 +128,9 @@ const login = async (req, res) => {
           email: user.email,
           phone: user.phone,
           role: user.role,
-          addresses: user.address || []
-        }
-      }
+          addresses: user.address || [],
+        },
+      },
     });
   } catch (error) {
     console.error('登录失败:', error);
@@ -144,7 +144,7 @@ const getCurrentUser = async (req, res) => {
     if (!userId) {
       return res.status(401).json({
         success: false,
-        message: '请先登录'
+        message: '请先登录',
       });
     }
 
@@ -152,7 +152,7 @@ const getCurrentUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: '用户不存在'
+        message: '用户不存在',
       });
     }
 
@@ -164,8 +164,8 @@ const getCurrentUser = async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
-        addresses: user.address || []
-      }
+        addresses: user.address || [],
+      },
     });
   } catch (error) {
     console.error('获取用户信息失败:', error);
@@ -179,25 +179,29 @@ const updateProfile = async (req, res) => {
     if (!userId) {
       return res.status(401).json({
         success: false,
-        message: '请先登录'
+        message: '请先登录',
       });
     }
 
     const { phone, email } = req.body;
     const updateData = {};
-    if (phone) updateData.phone = phone;
-    if (email) updateData.email = email;
+    if (phone) {
+      updateData.phone = phone;
+    }
+    if (email) {
+      updateData.email = email;
+    }
 
     const user = await User.findByIdAndUpdate(
       userId,
       { $set: updateData },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).select('-password');
 
     res.json({
       success: true,
       message: '更新成功',
-      data: user
+      data: user,
     });
   } catch (error) {
     console.error('更新用户信息失败:', error);
@@ -214,7 +218,7 @@ const changePassword = async (req, res) => {
     if (!userId) {
       return res.status(401).json({
         success: false,
-        message: '请先登录'
+        message: '请先登录',
       });
     }
 
@@ -222,7 +226,7 @@ const changePassword = async (req, res) => {
     if (!oldPassword || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: '请输入原密码和新密码'
+        message: '请输入原密码和新密码',
       });
     }
 
@@ -230,7 +234,7 @@ const changePassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: '用户不存在'
+        message: '用户不存在',
       });
     }
 
@@ -238,7 +242,7 @@ const changePassword = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(400).json({
         success: false,
-        message: '原密码错误'
+        message: '原密码错误',
       });
     }
 
@@ -247,7 +251,7 @@ const changePassword = async (req, res) => {
 
     res.json({
       success: true,
-      message: '密码修改成功'
+      message: '密码修改成功',
     });
   } catch (error) {
     console.error('修改密码失败:', error);
@@ -260,5 +264,5 @@ module.exports = {
   login,
   getCurrentUser,
   updateProfile,
-  changePassword
+  changePassword,
 };
